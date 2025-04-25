@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "868618992281",
+    "firebase_url": "https://movielife-9f648-default-rtdb.europe-west1.firebasedatabase.app",
+    "project_id": "movielife-9f648",
+    "storage_bucket": "movielife-9f648.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:868618992281:android:ec7005a632142bc6369608",
+        "android_client_info": {
+          "package_name": "com.example.movielife"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "868618992281-irrm61lv2l817al1q92jng240ko5tvld.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.movielife",
+            "certificate_hash": "ad4782d598aad95a6f0d8c474fa3e8a78d668cf0"
+          }
+        },
+        {
+          "client_id": "868618992281-dvp0ukj76l711rs6d4nm608ok03glt0b.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAma5pxpegmFWLugoUF_fPFsJqoZMGEepw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "868618992281-dvp0ukj76l711rs6d4nm608ok03glt0b.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

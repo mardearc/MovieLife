@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical">
+
+
+    <androidx.cardview.widget.CardView xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:layout_width="70dp"
+        android:layout_height="70dp"
+        android:layout_marginHorizontal="8dp"
+        android:layout_marginVertical="8dp"
+        app:cardCornerRadius="40dp"
+        app:cardElevation="8dp"
+        tools:cardBackgroundColor="#00BCD4">
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <ImageView
+                android:id="@+id/ivActor"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:scaleType="centerCrop" />
+
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom|center"
+                android:background="@color/peliculaItemName">
+
+
+            </FrameLayout>
+
+
+        </FrameLayout>
+
+    </androidx.cardview.widget.CardView>
+    <TextView
+        android:id="@+id/actorName"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textAlignment="center"
+        android:textColor="@color/black"
+        android:textStyle="bold"
+        android:textSize="10sp"
+        tools:text="@string/titanic"
+        tools:ignore="SmallSp" />
+    <TextView
+        android:id="@+id/actorCharacter"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:textAlignment="center"
+        android:textColor="@color/black"
+        android:textSize="10sp"
+        tools:text="@string/titanic"
+        tools:ignore="SmallSp" />
+</LinearLayout>

@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    android:padding="16dp"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <CheckBox
+        android:id="@+id/checkbox_watchlist"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Añadir a Watchlist" />
+
+    <CheckBox
+        android:id="@+id/checkbox_watched"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Marcar como vista" />
+
+    <EditText
+        android:id="@+id/edit_comment"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Escribe un comentario"
+        tools:ignore="TouchTargetSizeCheck" />
+
+    <RatingBar
+        android:id="@+id/rating_bar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:numStars="5"
+        android:stepSize="0.5"
+        android:layout_marginTop="8dp" />
+
+    <Button
+        android:id="@+id/btn_confirm"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Guardar"
+        android:layout_marginTop="16dp"/>
+</LinearLayout>

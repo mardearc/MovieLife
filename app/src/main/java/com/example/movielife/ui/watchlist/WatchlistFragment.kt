@@ -51,7 +51,7 @@ class WatchlistFragment : Fragment() {
     private fun initUI() {
         adapter = PeliculaAdapter { navigateToDetail(it) }
         binding.recyclerView.setHasFixedSize(true)
-        binding.recyclerView.layoutManager = GridLayoutManager(requireContext(), 2)
+        binding.recyclerView.layoutManager = GridLayoutManager(requireContext(), 4)
         binding.recyclerView.adapter = adapter
         searchWatchlist()
     }

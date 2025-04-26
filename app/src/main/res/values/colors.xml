@@ -8,6 +8,9 @@
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
 
+    <color name="green_principal">#027373</color>
+    <color name="green_secondary">#a8c0be</color>
+
     <color name="peliculaItemName">#72141316</color>
     <color name="estrella">#FFEB3B</color>
     <color name="estrellaVacia">#31312A</color>

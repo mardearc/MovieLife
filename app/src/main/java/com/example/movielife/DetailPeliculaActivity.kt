@@ -57,6 +57,10 @@ class DetailPeliculaActivity : AppCompatActivity() {
             bottomSheet.show(supportFragmentManager, "MovieActionsBottomSheet")
         }
 
+        binding.backButton.setOnClickListener{
+            finish()
+        }
+
     }
 
 

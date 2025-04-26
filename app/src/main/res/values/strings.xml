@@ -36,4 +36,5 @@
     <string name="login_failed">"Login failed"</string>
     <string name="default_web_client_id">868618992281-dvp0ukj76l711rs6d4nm608ok03glt0b.apps.googleusercontent.com</string>
     <string name="watchlist">Watchlist</string>
+    <string name="publicar">Publicar</string>
 </resources>

@@ -2,6 +2,7 @@ package com.example.movielife
 
 import android.annotation.SuppressLint
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -96,10 +97,53 @@ class MovieActionsBottomSheet(
                 }
             }
 
+            // Guardar publicación solo si existe comentario y rating
+            if(comment.isNotEmpty() && rating.toString().isNotEmpty()){
+                savePost(movieId, comment, rating.toDouble())
+            }
+
+
             onActionsConfirmed(watchlist, watched, comment, rating)
             dismiss()
         }
 
         return view
+    }
+
+    private fun savePost(peliculaId:Int, comentario:String, valoracion: Double) {
+        val database = FirebaseDatabase.getInstance()
+        val postsRef = database.getReference("postspeliculas")
+
+        val uid = FirebaseAuth.getInstance().currentUser?.uid ?: return
+        val post = PostPelicula(
+            peliculaId = peliculaId,
+            uid = uid,
+            comentario = comentario,
+            valoracion = valoracion
+        )
+
+        val nuevoPostRef = postsRef.push()
+        nuevoPostRef.setValue(post).addOnSuccessListener {
+            Log.d("Firebase", "Post guardado correctamente")
+        }.addOnFailureListener { e ->
+            Log.e("Firebase", "Error al guardar el post", e)
+        }
+
+        // Guardo una referencia al post para evitar duplicados
+        val usuarioPostsRef = FirebaseDatabase.getInstance()
+            .getReference("usuarios")
+            .child(uid)
+            .child("postspeliculas")
+        usuarioPostsRef.child(nuevoPostRef.key!!).setValue(true)
+
+        //Guardo una referencia del post para cada película
+        val peliculaPostsRef = FirebaseDatabase.getInstance()
+            .getReference("peliculas")
+            .child(peliculaId.toString())
+            .child("postspeliculas")
+
+        peliculaPostsRef.child(nuevoPostRef.key!!).setValue(true)
+
+
     }
 }

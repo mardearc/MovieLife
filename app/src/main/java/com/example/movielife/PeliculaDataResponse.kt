@@ -43,6 +43,7 @@ data class Country(
 )
 
 data class Provider(
+    @SerializedName("provider_id") val provider_id:Int,
     @SerializedName("logo_path") val logo_path: String,              // Ruta del logo
 )
 

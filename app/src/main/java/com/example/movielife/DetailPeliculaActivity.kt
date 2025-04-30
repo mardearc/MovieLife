@@ -1,11 +1,14 @@
 package com.example.movielife
 
 import android.content.Intent
+import android.content.pm.PackageManager
+import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.cardview.widget.CardView
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -168,8 +171,17 @@ class DetailPeliculaActivity : AppCompatActivity() {
         }
     }
 
+    data class ProviderInfo(
+        val packageName: String,
+        val uri: String
+    )
 
-
+    val providerMap = mapOf(
+        8 to ProviderInfo("com.netflix.mediaclient", "https://www.netflix.com/"), // o usa netflix:// si sabes que funciona
+        337 to ProviderInfo("com.disney.disneyplus", "disneyplus://"),
+        119 to ProviderInfo("com.amazon.avod.thirdpartyclient", "https://www.amazon.com/gp/video"),
+        9 to ProviderInfo("com.hulu.plus", "hulu://")
+    )
 
 
     private fun getPeliculaData(id: Int) {
@@ -230,6 +242,27 @@ class DetailPeliculaActivity : AppCompatActivity() {
                         // Agregar el ImageView al CardView
                         cardView.addView(imageView)
 
+                        cardView.setOnClickListener {
+                            val providerInfo = providerMap[plat.provider_id]
+                            providerInfo?.let {
+                                val intent = Intent(Intent.ACTION_VIEW, Uri.parse(it.uri))
+                                intent.setPackage(it.packageName)
+
+                                // Verifica si la app está instalada
+                                if (isAppInstalled(it.packageName)) {
+                                    startActivity(intent)
+                                } else {
+                                    val fallbackIntent = Intent(
+                                        Intent.ACTION_VIEW,
+                                        Uri.parse("https://play.google.com/store/apps/details?id=${it.packageName}")
+                                    )
+                                    startActivity(fallbackIntent)
+                                }
+                            }
+                        }
+
+
+
                         // Agregar el CardView al LinearLayout
                         logos.addView(cardView)
 
@@ -270,6 +303,16 @@ class DetailPeliculaActivity : AppCompatActivity() {
 
         }
     }
+
+    private fun isAppInstalled(packageName: String): Boolean {
+        return try {
+            packageManager.getPackageInfo(packageName, 0)
+            true
+        } catch (e: PackageManager.NameNotFoundException) {
+            false
+        }
+    }
+
 
     private fun sinPlataforma() {
         val noPlataformasTextView = TextView(this@DetailPeliculaActivity)

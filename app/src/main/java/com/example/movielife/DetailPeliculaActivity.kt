@@ -13,6 +13,10 @@ import com.example.movielife.DetailActorActivity.Companion.ACTOR_ID
 import com.squareup.picasso.Picasso
 import kotlinx.coroutines.CoroutineScope
 import com.example.movielife.databinding.ActivityDetailPeliculaBinding
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.ValueEventListener
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import retrofit2.Retrofit
@@ -40,6 +44,7 @@ class DetailPeliculaActivity : AppCompatActivity() {
         val id = intent.getIntExtra(EXTRA_ID, 0)
 
         getPeliculaData(id)
+        getPosts(id)
         adapterActor = ActorAdapter{navigateToActorDetail(it)}
         binding.recyclerViewActor.setHasFixedSize(true)
         binding.recyclerViewActor.layoutManager = LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
@@ -49,6 +54,9 @@ class DetailPeliculaActivity : AppCompatActivity() {
         binding.recyclerViewCrew.setHasFixedSize(true)
         binding.recyclerViewCrew.layoutManager = LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
         binding.recyclerViewCrew.adapter = adapterCrew
+
+        binding.recyclerViewPost.setHasFixedSize(true)
+        binding.recyclerViewPost.layoutManager = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
 
         binding.fab.setOnClickListener {
             val bottomSheet = MovieActionsBottomSheet(movieId = id, posterPath = posterPath) { watchlist, watched, comment, rating ->
@@ -63,6 +71,105 @@ class DetailPeliculaActivity : AppCompatActivity() {
         }
 
     }
+
+    private fun getPosts(id: Int) {
+        val database = FirebaseDatabase.getInstance()
+        val peliculaPostRef = database.getReference("peliculas").child(id.toString()).child("postspeliculas")
+
+        peliculaPostRef.addListenerForSingleValueEvent(object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                val postIds = mutableListOf<String>()
+                for (child in snapshot.children) {
+                    val key = child.key
+                    if (key != null) {
+                        postIds.add(key)
+                        Log.d("PostLog", "Post ID encontrado: $key")
+                    }
+                }
+
+                if (postIds.isEmpty()) {
+                    Log.d("PostLog", "No se encontraron posts para la película con ID $id")
+                    binding.recyclerViewPost.adapter = PostAdapter(emptyList(), emptyMap())
+                    return
+                }
+
+                val postsRef = database.getReference("postspeliculas")
+                val postList = mutableListOf<PostPelicula>()
+                val uidSet = mutableSetOf<String>()
+                var fetchedPosts = 0
+
+                for (postId in postIds) {
+                    postsRef.child(postId).addListenerForSingleValueEvent(object : ValueEventListener {
+                        override fun onDataChange(postSnapshot: DataSnapshot) {
+                            val post = postSnapshot.getValue(PostPelicula::class.java)
+                            if (post != null) {
+                                postList.add(post)
+                                uidSet.add(post.uid)
+                                Log.d("PostLog", "Post recuperado: ${post.comentario} (UID: ${post.uid})")
+                            } else {
+                                Log.d("PostLog", "Post nulo para ID: $postId")
+                            }
+
+                            fetchedPosts++
+                            if (fetchedPosts == postIds.size) {
+                                Log.d("PostLog", "Total de posts recuperados: ${postList.size}")
+                                fetchUsersAndSetAdapter(postList, uidSet)
+                            }
+                        }
+
+                        override fun onCancelled(error: DatabaseError) {
+                            Log.e("PostLog", "Error recuperando post: ${error.message}")
+                        }
+                    })
+                }
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+                Log.e("PostLog", "Error accediendo a referencias de posts: ${error.message}")
+            }
+        })
+    }
+
+    private fun fetchUsersAndSetAdapter(postList: List<PostPelicula>, uidSet: Set<String>) {
+        val database = FirebaseDatabase.getInstance()
+        val usuariosRef = database.getReference("usuarios")
+        val userMap = mutableMapOf<String, User>()
+        var fetchedUsers = 0
+
+        if (uidSet.isEmpty()) {
+            Log.d("PostLog", "No hay usuarios a recuperar")
+            binding.recyclerViewPost.adapter = PostAdapter(postList, userMap)
+            return
+        }
+
+        for (uid in uidSet) {
+            Log.d("PostLog", "Recuperando datos del usuario: $uid")
+            usuariosRef.child(uid).addListenerForSingleValueEvent(object : ValueEventListener {
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    val user = snapshot.getValue(User::class.java)
+                    if (user != null) {
+                        userMap[uid] = user
+                        Log.d("PostLog", "Usuario recuperado: ${user.nombreUsuario}")
+                    } else {
+                        Log.d("PostLog", "Usuario nulo para UID: $uid")
+                    }
+
+                    fetchedUsers++
+                    if (fetchedUsers == uidSet.size) {
+                        Log.d("PostLog", "Usuarios recuperados: ${userMap.size}")
+                        binding.recyclerViewPost.adapter = PostAdapter(postList, userMap)
+                    }
+                }
+
+                override fun onCancelled(error: DatabaseError) {
+                    Log.e("PostLog", "Error recuperando usuario: ${error.message}")
+                }
+            })
+        }
+    }
+
+
+
 
 
     private fun getPeliculaData(id: Int) {
@@ -148,7 +255,6 @@ class DetailPeliculaActivity : AppCompatActivity() {
             }
 
             // Crew
-
             val crewDetail =
                 getRetrofit().create(ApiService::class.java).getMovieCrew(id, apiKey)
 

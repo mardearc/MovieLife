@@ -5,6 +5,6 @@ data class PostPelicula(
     val uid: String = "",
     val comentario: String = "",
     val valoracion: Double = 0.0,
-    val timestamp: Long = System.currentTimeMillis()
+    val timestamp: Long = System.currentTimeMillis(),
+    val posterPath: String = ""
 )
-

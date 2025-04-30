@@ -14,6 +14,7 @@ import com.google.firebase.database.GenericTypeIndicator
 
 class MovieActionsBottomSheet(
     private var movieId: Int,
+    private var posterPath : String,
     private val onActionsConfirmed: (watchlist: Boolean, watched: Boolean, comment: String, rating: Float) -> Unit
 ) : BottomSheetDialogFragment() {
 
@@ -119,7 +120,8 @@ class MovieActionsBottomSheet(
             peliculaId = peliculaId,
             uid = uid,
             comentario = comentario,
-            valoracion = valoracion
+            valoracion = valoracion,
+            posterPath = posterPath
         )
 
         val nuevoPostRef = postsRef.push()

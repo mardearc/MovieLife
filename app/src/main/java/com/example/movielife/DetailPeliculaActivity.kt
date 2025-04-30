@@ -30,6 +30,7 @@ class DetailPeliculaActivity : AppCompatActivity() {
 
     private lateinit var adapterCrew: CrewAdapter
 
+    private lateinit var posterPath : String
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -50,7 +51,7 @@ class DetailPeliculaActivity : AppCompatActivity() {
         binding.recyclerViewCrew.adapter = adapterCrew
 
         binding.fab.setOnClickListener {
-            val bottomSheet = MovieActionsBottomSheet(movieId = id) { watchlist, watched, comment, rating ->
+            val bottomSheet = MovieActionsBottomSheet(movieId = id, posterPath = posterPath) { watchlist, watched, comment, rating ->
 
                 Log.d("MovieActions", "Watchlist: $watchlist, Watched: $watched, Comment: $comment, Rating: $rating")
             }
@@ -174,12 +175,13 @@ class DetailPeliculaActivity : AppCompatActivity() {
 
     private fun createUI(body: PeliculaDetailResponse) {
 
+        posterPath = "https://image.tmdb.org/t/p/original/" + body.url
         //Imagen poster de fondo
         Picasso.get().load("https://image.tmdb.org/t/p/original/" + body.url)
-            .into(binding.ivDetalleFondo);
+            .into(binding.ivDetalleFondo)
         //Imagen poster
         Picasso.get().load("https://image.tmdb.org/t/p/original/" + body.url)
-            .into(binding.ivDetalle);
+            .into(binding.ivDetalle)
 
         //Imagen fondo de la informacion / Imagen secundaria
         Picasso.get().load("https://image.tmdb.org/t/p/original/" + body.posterFondo)

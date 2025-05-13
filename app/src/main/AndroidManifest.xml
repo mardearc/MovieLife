@@ -15,6 +15,9 @@
         android:theme="@style/Theme.MovieLife"
         tools:targetApi="31">
         <activity
+            android:name=".OtherUserProfile"
+            android:exported="false" />
+        <activity
             android:name=".ElegirUsernameActivity"
             android:exported="false" />
         <activity
@@ -30,7 +33,7 @@
         <activity
             android:name=".DetailSerieActivity"
             android:exported="false"
-            android:theme="@style/Theme.MovieLife.NoActionBar"/>
+            android:theme="@style/Theme.MovieLife.NoActionBar" />
         <activity
             android:name=".MainActivity"
             android:exported="false"
@@ -39,11 +42,15 @@
         <activity
             android:name=".DetailActorActivity"
             android:exported="false"
-            android:theme="@style/Theme.MovieLife.NoActionBar"/>
+            android:theme="@style/Theme.MovieLife.NoActionBar" />
         <activity
             android:name=".DetailPeliculaActivity"
             android:exported="false"
-            android:theme="@style/Theme.MovieLife.NoActionBar"/>
+            android:theme="@style/Theme.MovieLife.NoActionBar" />
+        <activity
+            android:name=".OtherUserProfileActivity"
+            android:exported="false"
+            android:theme="@style/Theme.MovieLife.NoActionBar" />
     </application>
 
 </manifest>

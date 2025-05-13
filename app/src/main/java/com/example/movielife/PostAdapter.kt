@@ -42,7 +42,9 @@ class PostAdapter(
         }
 
         holder.imagePerfil.setOnClickListener{
-
+            val intent = Intent(contexto, OtherUserProfileActivity::class.java)
+            intent.putExtra("uid", post.uid)
+            contexto.startActivity(intent)
         }
 
     }

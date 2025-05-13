@@ -85,7 +85,6 @@ class ProfileHistorialFragment : Fragment(){
     }
 
     private fun searchPeliculasVistas() {
-        val uid = FirebaseAuth.getInstance().currentUser?.uid ?: return
         val database = FirebaseDatabase.getInstance().reference.child("usuarios").child(uid)
 
         binding.pbBuscador.isVisible = true

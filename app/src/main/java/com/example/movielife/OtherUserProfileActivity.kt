@@ -1,15 +1,9 @@
-package com.example.movielife.ui.profile
+package com.example.movielife
 
 import android.os.Bundle
-import androidx.fragment.app.Fragment
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
-import com.example.movielife.ProfilePagerAdapter
-import com.example.movielife.R
-import com.example.movielife.User
-import com.example.movielife.databinding.FragmentMoviesBinding
-import com.example.movielife.databinding.FragmentProfileBinding
+import androidx.appcompat.app.AppCompatActivity
+import com.example.movielife.databinding.ActivityOtherUserProfileBinding
 import com.google.android.material.tabs.TabLayoutMediator
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DataSnapshot
@@ -17,22 +11,41 @@ import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
 
-class ProfileFragment : Fragment() {
+class OtherUserProfileActivity : AppCompatActivity() {
 
-    private lateinit var binding:FragmentProfileBinding
+    private lateinit var binding: ActivityOtherUserProfileBinding
 
     private lateinit var viewedUserId: String
     private lateinit var currentUserId: String
 
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
-        binding = FragmentProfileBinding.inflate(layoutInflater)
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        binding = ActivityOtherUserProfileBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
-        val adapter = ProfilePagerAdapter(this, currentUserId)
+        // Obtener los datos del usuario visualizado y el usuario actual
+        viewedUserId = intent.getStringExtra("uid") ?: ""
+        currentUserId = FirebaseAuth.getInstance().currentUser?.uid ?: ""
+
+        // Configurar ViewPager y TabLayout
+        setupViewPagerAndTabs()
+
+        // Cargar la información del usuario
+        loadUserInfo()
+
+        // Contar medios (películas y series vistas)
+        countMedia()
+
+        // Configurar el botón de seguir
+        setupFollowButton()
+    }
+
+    private fun setupViewPagerAndTabs() {
+        // Configurando el adaptador para el ViewPager
+        val adapter = ProfilePagerAdapterActivity(this, viewedUserId)
         binding.viewPager.adapter = adapter
 
+        // Configurando las pestañas
         TabLayoutMediator(binding.tabLayout, binding.viewPager) { tab, position ->
             tab.text = when (position) {
                 0 -> "Comentarios"
@@ -40,19 +53,7 @@ class ProfileFragment : Fragment() {
                 else -> null
             }
         }.attach()
-
-        countMedia()
-        setupFollowButton()
-        loadUserInfo()
-        return binding.root
     }
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        viewedUserId = arguments?.getString("uid") ?: ""
-        currentUserId = FirebaseAuth.getInstance().currentUser?.uid ?: ""
-    }
-
 
     private fun loadUserInfo() {
         val userRef = FirebaseDatabase.getInstance().getReference("usuarios").child(viewedUserId)
@@ -64,7 +65,7 @@ class ProfileFragment : Fragment() {
                     binding.tvUsername.text = "@${it.nombreUsuario}"
 
                     // Imagen de perfil
-                    val context = requireContext()
+                    val context = applicationContext
                     val imgId = context.resources.getIdentifier(it.fotoPerfil, "drawable", context.packageName)
                     binding.imgPerfil.setImageResource(if (imgId != 0) imgId else R.drawable.ic_launcher_foreground)
                 }
@@ -98,8 +99,8 @@ class ProfileFragment : Fragment() {
         })
     }
 
-
     private fun setupFollowButton() {
+        // Si es el mismo usuario, no se muestra el botón de seguir
         if (viewedUserId == currentUserId) {
             binding.btnSeguir.visibility = View.GONE
             return

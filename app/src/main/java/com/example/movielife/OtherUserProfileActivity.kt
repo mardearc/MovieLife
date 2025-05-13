@@ -104,6 +104,8 @@ class OtherUserProfileActivity : AppCompatActivity() {
         if (viewedUserId == currentUserId) {
             binding.btnSeguir.visibility = View.GONE
             return
+        }else{
+            binding.btnSeguir.visibility = View.VISIBLE
         }
 
         val followRef = FirebaseDatabase.getInstance().getReference("seguidores").child(currentUserId)

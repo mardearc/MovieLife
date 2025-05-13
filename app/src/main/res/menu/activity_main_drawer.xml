@@ -22,5 +22,10 @@
             android:title="@string/watchlist"
             android:icon="@drawable/ic_menu_camera" />
 
+        <item
+            android:id="@+id/nav_profile"
+            android:title="Mi Perfil"
+            android:icon="@drawable/ic_menu_camera" />
+
     </group>
 </menu>

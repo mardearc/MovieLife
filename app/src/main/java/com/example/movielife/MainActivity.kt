@@ -37,26 +37,43 @@ class MainActivity : AppCompatActivity() {
         val drawerLayout: DrawerLayout = binding.drawerLayout
         val navView: NavigationView = binding.navView
         val navController = findNavController(R.id.nav_host_fragment_content_main)
-        // Passing each menu ID as a set of Ids because each
-        // menu should be considered as top level destinations.
+
         appBarConfiguration = AppBarConfiguration(
             setOf(
-                R.id.nav_home, R.id.nav_movies, R.id.nav_series, R.id.nav_watchlist
+                R.id.nav_home, R.id.nav_movies, R.id.nav_series, R.id.nav_watchlist, R.id.nav_profile
             ), drawerLayout
         )
         setupActionBarWithNavController(navController, appBarConfiguration)
         navView.setupWithNavController(navController)
 
-        // Configurar la foto de perfil del menu y el nombre de usuario
-        // Asumiendo que tienes un DrawerLayout y un NavigationView
 
         val currentUser = FirebaseAuth.getInstance().currentUser
-        val userId = currentUser?.uid  // ID del usuario
+        val userId = currentUser?.uid
 
         val database = FirebaseDatabase.getInstance("https://movielife-9f648-default-rtdb.europe-west1.firebasedatabase.app")
         val databaseRef = database.getReference("usuarios")
 
-        val userRef = databaseRef.child(userId!!) // Aquí el ID del usuario autenticado
+        val userRef = databaseRef.child(userId!!)
+
+        navView.setNavigationItemSelectedListener { menuItem ->
+            when (menuItem.itemId) {
+                R.id.nav_profile -> {
+                    val bundle = Bundle().apply {
+                        putString("uid", userId)
+                    }
+                    navController.navigate(R.id.nav_profile, bundle)
+                    drawerLayout.closeDrawers()
+                    true
+                }
+                else -> {
+                    // Para los demás, usar navegación por defecto
+                    navController.navigate(menuItem.itemId)
+                    drawerLayout.closeDrawers()
+                    true
+                }
+            }
+        }
+
 
         userRef.get().addOnCompleteListener { task ->
             if (task.isSuccessful) {
@@ -87,7 +104,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
-        // Inflate the menu; this adds items to the action bar if it is present.
+
         menuInflater.inflate(R.menu.main, menu)
         return true
     }

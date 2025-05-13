@@ -34,7 +34,6 @@ class MoviesFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        // Inflate the layout for this fragment
         binding =FragmentMoviesBinding.inflate(layoutInflater)
 
         retrofit = getRetrofit()

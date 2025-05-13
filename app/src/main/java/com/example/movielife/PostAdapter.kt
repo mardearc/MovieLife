@@ -1,8 +1,12 @@
 package com.example.movielife
 
+import android.content.Intent
+import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.navigation.findNavController
 import androidx.recyclerview.widget.RecyclerView
+import com.example.movielife.DetailPeliculaActivity.Companion.EXTRA_ID
 import com.squareup.picasso.Picasso
 
 class PostAdapter(
@@ -30,6 +34,16 @@ class PostAdapter(
         holder.imagePerfil.setImageResource(if (imgPerfilId != 0) imgPerfilId else R.drawable.ic_launcher_foreground)
 
         Picasso.get().load("https://image.tmdb.org/t/p/w500${post.posterPath}").into(holder.imgMoviePoster)
+
+        holder.imgMoviePoster.setOnClickListener{
+            val intent = Intent(contexto, DetailPeliculaActivity::class.java)
+            intent.putExtra(EXTRA_ID, post.peliculaId)
+            contexto.startActivity(intent)
+        }
+
+        holder.imagePerfil.setOnClickListener{
+
+        }
 
     }
 

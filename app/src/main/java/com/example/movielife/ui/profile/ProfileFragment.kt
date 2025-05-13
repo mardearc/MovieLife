@@ -5,56 +5,140 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import com.example.movielife.ProfilePagerAdapter
 import com.example.movielife.R
+import com.example.movielife.User
+import com.example.movielife.databinding.FragmentMoviesBinding
+import com.example.movielife.databinding.FragmentProfileBinding
+import com.google.android.material.tabs.TabLayoutMediator
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.ValueEventListener
 
-// TODO: Rename parameter arguments, choose names that match
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-private const val ARG_PARAM1 = "param1"
-private const val ARG_PARAM2 = "param2"
-
-/**
- * A simple [Fragment] subclass.
- * Use the [ProfileFragment.newInstance] factory method to
- * create an instance of this fragment.
- */
 class ProfileFragment : Fragment() {
-    // TODO: Rename and change types of parameters
-    private var param1: String? = null
-    private var param2: String? = null
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        arguments?.let {
-            param1 = it.getString(ARG_PARAM1)
-            param2 = it.getString(ARG_PARAM2)
-        }
-    }
+    private lateinit var binding:FragmentProfileBinding
+
+    private lateinit var viewedUserId: String
+    private lateinit var currentUserId: String
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_profile, container, false)
+    ): View {
+        binding = FragmentProfileBinding.inflate(layoutInflater)
+
+        val adapter = ProfilePagerAdapter(this, currentUserId)
+        binding.viewPager.adapter = adapter
+
+        TabLayoutMediator(binding.tabLayout, binding.viewPager) { tab, position ->
+            tab.text = when (position) {
+                0 -> "Comentarios"
+                1 -> "Historial"
+                else -> null
+            }
+        }.attach()
+
+        countMedia()
+        setupFollowButton()
+        loadUserInfo()
+        return binding.root
     }
 
-    companion object {
-        /**
-         * Use this factory method to create a new instance of
-         * this fragment using the provided parameters.
-         *
-         * @param param1 Parameter 1.
-         * @param param2 Parameter 2.
-         * @return A new instance of fragment ProfileFragment.
-         */
-        // TODO: Rename and change types and number of parameters
-        @JvmStatic
-        fun newInstance(param1: String, param2: String) =
-            ProfileFragment().apply {
-                arguments = Bundle().apply {
-                    putString(ARG_PARAM1, param1)
-                    putString(ARG_PARAM2, param2)
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        viewedUserId = arguments?.getString("uid") ?: ""
+        currentUserId = FirebaseAuth.getInstance().currentUser?.uid ?: ""
+    }
+
+
+    private fun loadUserInfo() {
+        val userRef = FirebaseDatabase.getInstance().getReference("usuarios").child(viewedUserId)
+
+        userRef.addListenerForSingleValueEvent(object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                val user = snapshot.getValue(User::class.java)
+                user?.let {
+                    binding.tvUsername.text = "@${it.nombreUsuario}"
+
+                    // Imagen de perfil
+                    val context = requireContext()
+                    val imgId = context.resources.getIdentifier(it.fotoPerfil, "drawable", context.packageName)
+                    binding.imgPerfil.setImageResource(if (imgId != 0) imgId else R.drawable.ic_launcher_foreground)
                 }
             }
+
+            override fun onCancelled(error: DatabaseError) {}
+        })
     }
+
+    private fun countMedia() {
+        val db = FirebaseDatabase.getInstance()
+
+        val userRef = db.getReference("usuarios").child(viewedUserId)
+
+        userRef.child("peliculasVistas").addListenerForSingleValueEvent(object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                val peliculasCount = snapshot.childrenCount
+                binding.tvPeliculasCount.text = "$peliculasCount"
+            }
+
+            override fun onCancelled(error: DatabaseError) {}
+        })
+
+        userRef.child("seriesVistas").addListenerForSingleValueEvent(object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                val seriesCount = snapshot.childrenCount
+                binding.tvSeriesCount.text = "$seriesCount"
+            }
+
+            override fun onCancelled(error: DatabaseError) {}
+        })
+    }
+
+
+    private fun setupFollowButton() {
+        if (viewedUserId == currentUserId) {
+            binding.btnSeguir.visibility = View.GONE
+            return
+        }
+
+        val followRef = FirebaseDatabase.getInstance().getReference("seguidores").child(currentUserId)
+
+        followRef.child(viewedUserId).addListenerForSingleValueEvent(object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                val sigue = snapshot.exists()
+                updateFollowButton(sigue)
+            }
+
+            override fun onCancelled(error: DatabaseError) {}
+        })
+
+        binding.btnSeguir.setOnClickListener {
+            val ref = FirebaseDatabase.getInstance().getReference("seguidores").child(currentUserId)
+
+            ref.child(viewedUserId).addListenerForSingleValueEvent(object : ValueEventListener {
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    if (snapshot.exists()) {
+                        ref.child(viewedUserId).removeValue()
+                        updateFollowButton(false)
+                    } else {
+                        ref.child(viewedUserId).setValue(true)
+                        updateFollowButton(true)
+                    }
+                }
+
+                override fun onCancelled(error: DatabaseError) {}
+            })
+        }
+    }
+
+    private fun updateFollowButton(sigue: Boolean) {
+        binding.btnSeguir.text = if (sigue) "Siguiendo" else "Seguir"
+    }
+
+
+
 }

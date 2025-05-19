@@ -8,7 +8,6 @@ import android.util.Log
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.cardview.widget.CardView
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -92,7 +91,7 @@ class DetailPeliculaActivity : AppCompatActivity() {
 
                 if (postIds.isEmpty()) {
                     Log.d("PostLog", "No se encontraron posts para la película con ID $id")
-                    binding.recyclerViewPost.adapter = PostAdapter(emptyList(), emptyMap())
+                    binding.recyclerViewPost.adapter = PostPeliculaAdapter(emptyList(), emptyMap())
                     return
                 }
 
@@ -141,7 +140,7 @@ class DetailPeliculaActivity : AppCompatActivity() {
 
         if (uidSet.isEmpty()) {
             Log.d("PostLog", "No hay usuarios a recuperar")
-            binding.recyclerViewPost.adapter = PostAdapter(postList, userMap)
+            binding.recyclerViewPost.adapter = PostPeliculaAdapter(postList, userMap)
             return
         }
 
@@ -160,7 +159,7 @@ class DetailPeliculaActivity : AppCompatActivity() {
                     fetchedUsers++
                     if (fetchedUsers == uidSet.size) {
                         Log.d("PostLog", "Usuarios recuperados: ${userMap.size}")
-                        binding.recyclerViewPost.adapter = PostAdapter(postList, userMap)
+                        binding.recyclerViewPost.adapter = PostPeliculaAdapter(postList, userMap)
                     }
                 }
 

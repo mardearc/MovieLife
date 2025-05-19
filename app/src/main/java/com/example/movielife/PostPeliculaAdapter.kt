@@ -1,15 +1,13 @@
 package com.example.movielife
 
 import android.content.Intent
-import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import androidx.navigation.findNavController
 import androidx.recyclerview.widget.RecyclerView
 import com.example.movielife.DetailPeliculaActivity.Companion.EXTRA_ID
 import com.squareup.picasso.Picasso
 
-class PostAdapter(
+class PostPeliculaAdapter(
     private val postList: List<PostPelicula>,
     private val userMap: Map<String, User>
 ) : RecyclerView.Adapter<PostViewHolder>() {

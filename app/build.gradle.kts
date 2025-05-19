@@ -77,6 +77,8 @@ dependencies {
     implementation("com.google.android.gms:play-services-auth:21.0.0")
     implementation(libs.firebase.database.ktx)
     implementation(libs.firebase.firestore.ktx)
+    implementation(libs.androidx.legacy.support.v4)
+    implementation(libs.androidx.recyclerview)
 
     coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.1.5")
 

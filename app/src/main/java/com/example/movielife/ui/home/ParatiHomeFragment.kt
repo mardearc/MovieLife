@@ -7,7 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.util.Log
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.example.movielife.PostAdapter
+import com.example.movielife.PostPeliculaAdapter
 import com.example.movielife.PostPelicula
 import com.example.movielife.User
 import com.example.movielife.databinding.FragmentParatiHomeBinding
@@ -18,7 +18,7 @@ class ParatiHomeFragment : Fragment() {
     private lateinit var binding: FragmentParatiHomeBinding
     private val postList = mutableListOf<PostPelicula>()
     private val userMap = mutableMapOf<String, User>()
-    private lateinit var adapter: PostAdapter
+    private lateinit var adapter: PostPeliculaAdapter
 
     companion object {
         fun newInstance(uid: String): ParatiHomeFragment {
@@ -38,7 +38,7 @@ class ParatiHomeFragment : Fragment() {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        adapter = PostAdapter(postList, userMap)
+        adapter = PostPeliculaAdapter(postList, userMap)
         binding.recyclerViewPosts.layoutManager = LinearLayoutManager(requireContext())
         binding.recyclerViewPosts.adapter = adapter
 
@@ -65,7 +65,7 @@ class ParatiHomeFragment : Fragment() {
 
                 if (postList.isEmpty()) {
                     Log.d("ParatiPostLog", "No se encontraron posts")
-                    binding.recyclerViewPosts.adapter = PostAdapter(emptyList(), emptyMap())
+                    binding.recyclerViewPosts.adapter = PostPeliculaAdapter(emptyList(), emptyMap())
                     return
                 }
 
@@ -85,7 +85,7 @@ class ParatiHomeFragment : Fragment() {
         var fetchedUsers = 0
 
         if (uidSet.isEmpty()) {
-            binding.recyclerViewPosts.adapter = PostAdapter(postList, userMap)
+            binding.recyclerViewPosts.adapter = PostPeliculaAdapter(postList, userMap)
             return
         }
 
@@ -99,7 +99,7 @@ class ParatiHomeFragment : Fragment() {
 
                     fetchedUsers++
                     if (fetchedUsers == uidSet.size) {
-                        binding.recyclerViewPosts.adapter = PostAdapter(postList, userMap)
+                        binding.recyclerViewPosts.adapter = PostPeliculaAdapter(postList, userMap)
                     }
                 }
 

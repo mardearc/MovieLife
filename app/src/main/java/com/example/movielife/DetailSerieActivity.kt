@@ -6,15 +6,15 @@ import android.util.Log
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
-import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.cardview.widget.CardView
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.movielife.DetailActorActivity.Companion.ACTOR_ID
-import com.example.movielife.databinding.ActivityDetailPeliculaBinding
 import com.example.movielife.databinding.ActivityDetailSerieBinding
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.ValueEventListener
 import com.squareup.picasso.Picasso
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -32,6 +32,8 @@ class DetailSerieActivity : AppCompatActivity() {
 
     private lateinit var adapter: ActorAdapter
 
+    private lateinit var posterPath : String
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -41,10 +43,124 @@ class DetailSerieActivity : AppCompatActivity() {
         val id = intent.getIntExtra(EXTRA_ID, 0)
 
         getSerieData(id)
+        getPosts(id)
         adapter = ActorAdapter{navigateToActorDetail(it)}
         binding.recyclerView.setHasFixedSize(true)
         binding.recyclerView.layoutManager = LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
         binding.recyclerView.adapter = adapter
+
+        binding.recyclerViewPost.setHasFixedSize(true)
+        binding.recyclerViewPost.layoutManager = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
+
+
+        binding.fab.setOnClickListener {
+            val bottomSheet = SerieActionsBottomSheet(serieId = id, posterPath = posterPath) { watchlist, watched, comment, rating ->
+
+                Log.d("SerieActions", "Watchlist: $watchlist, Watched: $watched, Comment: $comment, Rating: $rating")
+            }
+            bottomSheet.show(supportFragmentManager, "SerieActionsBottomSheet")
+        }
+
+        binding.backButton.setOnClickListener{
+            finish()
+        }
+    }
+
+    private fun getPosts(id: Int) {
+        val database = FirebaseDatabase.getInstance()
+        val seriesPostRef = database.getReference("series").child(id.toString()).child("postsseries")
+
+        seriesPostRef.addListenerForSingleValueEvent(object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                val postIds = mutableListOf<String>()
+                for (child in snapshot.children) {
+                    val key = child.key
+                    if (key != null) {
+                        postIds.add(key)
+                        Log.d("PostLog", "Post ID encontrado: $key")
+                    }
+                }
+
+                if (postIds.isEmpty()) {
+                    Log.d("PostLog", "No se encontraron posts para la serie con ID $id")
+                    binding.recyclerViewPost.adapter = PostSerieAdapter(emptyList(), emptyMap())
+                    return
+                }
+
+                val postsRef = database.getReference("postsseries")
+                val postList = mutableListOf<PostPelicula>()
+                val uidSet = mutableSetOf<String>()
+                var fetchedPosts = 0
+
+                for (postId in postIds) {
+                    postsRef.child(postId).addListenerForSingleValueEvent(object :
+                        ValueEventListener {
+                        override fun onDataChange(postSnapshot: DataSnapshot) {
+                            val post = postSnapshot.getValue(PostPelicula::class.java)
+                            if (post != null) {
+                                postList.add(post)
+                                uidSet.add(post.uid)
+                                Log.d("PostLog", "Post recuperado: ${post.comentario} (UID: ${post.uid})")
+                            } else {
+                                Log.d("PostLog", "Post nulo para ID: $postId")
+                            }
+
+                            fetchedPosts++
+                            if (fetchedPosts == postIds.size) {
+                                Log.d("PostLog", "Total de posts recuperados: ${postList.size}")
+                                fetchUsersAndSetAdapter(postList, uidSet)
+                            }
+                        }
+
+                        override fun onCancelled(error: DatabaseError) {
+                            Log.e("PostLog", "Error recuperando post: ${error.message}")
+                        }
+                    })
+                }
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+                Log.e("PostLog", "Error accediendo a referencias de posts: ${error.message}")
+            }
+        })
+    }
+
+    private fun fetchUsersAndSetAdapter(postList: List<PostPelicula>, uidSet: Set<String>) {
+        val database = FirebaseDatabase.getInstance()
+        val usuariosRef = database.getReference("usuarios")
+        val userMap = mutableMapOf<String, User>()
+        var fetchedUsers = 0
+
+        if (uidSet.isEmpty()) {
+            Log.d("PostLog", "No hay usuarios a recuperar")
+            binding.recyclerViewPost.adapter = PostSerieAdapter(postList, userMap)
+            return
+        }
+
+        for (uid in uidSet) {
+            Log.d("PostLog", "Recuperando datos del usuario: $uid")
+            usuariosRef.child(uid).addListenerForSingleValueEvent(object : ValueEventListener {
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    val user = snapshot.getValue(User::class.java)
+                    if (user != null) {
+                        userMap[uid] = user
+                        Log.d("PostLog", "Usuario recuperado: ${user.nombreUsuario}")
+                    } else {
+                        Log.d("PostLog", "Usuario nulo para UID: $uid")
+                    }
+
+                    fetchedUsers++
+                    if (fetchedUsers == uidSet.size) {
+                        Log.d("PostLog", "Usuarios recuperados: ${userMap.size}")
+                        binding.recyclerViewPost.adapter = PostSerieAdapter(postList, userMap)
+                    }
+                }
+
+                override fun onCancelled(error: DatabaseError) {
+                    Log.e("PostLog", "Error recuperando usuario: ${error.message}")
+                }
+            })
+        }
     }
 
 
@@ -143,6 +259,7 @@ class DetailSerieActivity : AppCompatActivity() {
 
     private fun createUI(body: SerieDetailResponse) {
 
+        posterPath = "https://image.tmdb.org/t/p/original/" + body.url
         //Imagen poster de fondo
         Picasso.get().load("https://image.tmdb.org/t/p/original/" + body.url)
             .into(binding.ivDetalleFondo);

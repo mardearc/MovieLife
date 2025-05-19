@@ -7,11 +7,9 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.example.movielife.PostAdapter
+import com.example.movielife.PostPeliculaAdapter
 import com.example.movielife.PostPelicula
-import com.example.movielife.R
 import com.example.movielife.User
-import com.example.movielife.databinding.FragmentProfileHistorialBinding
 import com.example.movielife.databinding.FragmentProfilePostBinding
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
@@ -24,7 +22,7 @@ class ProfilePostFragment : Fragment() {
     private lateinit var binding: FragmentProfilePostBinding
     private val postList = mutableListOf<PostPelicula>()
     private val userMap = mutableMapOf<String, User>()
-    private lateinit var adapter: PostAdapter
+    private lateinit var adapter: PostPeliculaAdapter
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
@@ -40,7 +38,7 @@ class ProfilePostFragment : Fragment() {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        adapter = PostAdapter(postList, userMap)
+        adapter = PostPeliculaAdapter(postList, userMap)
         binding.recyclerViewPosts.layoutManager = LinearLayoutManager(requireContext())
         binding.recyclerViewPosts.adapter = adapter
     }
@@ -69,7 +67,7 @@ class ProfilePostFragment : Fragment() {
 
                 if (postIds.isEmpty()) {
                     Log.d("ProfilePostLog", "El usuario no tiene posts")
-                    binding.recyclerViewPosts.adapter = PostAdapter(emptyList(), emptyMap())
+                    binding.recyclerViewPosts.adapter = PostPeliculaAdapter(emptyList(), emptyMap())
                     return
                 }
 
@@ -98,7 +96,7 @@ class ProfilePostFragment : Fragment() {
                                                 userMap[uid] = user
                                             }
                                             binding.recyclerViewPosts.adapter =
-                                                PostAdapter(postListOrdenado, userMap)
+                                                PostPeliculaAdapter(postListOrdenado, userMap)
                                         }
 
                                         override fun onCancelled(error: DatabaseError) {

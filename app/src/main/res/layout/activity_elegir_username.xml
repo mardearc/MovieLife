@@ -11,7 +11,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="104dp"
-        android:text="Elige tu nombre de usuario y foto de perfil"
+        android:text="@string/elige_tu_nombre_de_usuario_y_foto_de_perfil"
         android:textAlignment="center"
         android:textSize="18sp"
         app:layout_constraintEnd_toEndOf="parent"
@@ -23,10 +23,13 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="44dp"
-        android:hint="Nombre de usuario"
+        android:hint="@string/nombre_de_usuario"
         android:inputType="text"
         android:padding="16dp"
         android:textSize="16sp"
+        android:maxLength="12"
+        android:layout_marginStart="12dp"
+        android:layout_marginEnd="12dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
@@ -173,6 +176,8 @@
         android:id="@+id/btnContinuar"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
         android:text="Continuar"
         android:textSize="16sp"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -191,6 +196,6 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/cvProfilePicture"
-        tools:text="UserName" />
+        android:text="@string/username"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

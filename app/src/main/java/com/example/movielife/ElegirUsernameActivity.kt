@@ -21,9 +21,7 @@ class ElegirUsernameActivity : AppCompatActivity() {
         binding = ActivityElegirUsernameBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        var fotoSeleccionada : String = "imgperfil1"
-
-        // Actualizar dinámicamente el username final
+        var fotoSeleccionada = "imgperfil1"
 
         binding.editTextUsername.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
@@ -75,24 +73,50 @@ class ElegirUsernameActivity : AppCompatActivity() {
         }
 
 
-
         binding.btnContinuar.setOnClickListener {
-            val nombreUsuario = binding.editTextUsername.text.toString()
+            val nombreUsuario = binding.editTextUsername.text.toString().trim()
 
-            val uid = FirebaseAuth.getInstance().currentUser!!.uid
-            val usuario = User(
-                uid = uid,
-                nombreUsuario = nombreUsuario,
-                fotoPerfil = fotoSeleccionada
-            )
-            FirebaseDatabase.getInstance().reference
-                .child("usuarios")
-                .child(uid)
-                .setValue(usuario)
-                .addOnSuccessListener {
-                    startActivity(Intent(this, MainActivity::class.java))
-                    finish()
+            if (nombreUsuario.length < 4) {
+                binding.editTextUsername.error = "Mínimo 4 caracteres"
+                return@setOnClickListener
+            }
+
+            val database = FirebaseDatabase.getInstance().reference
+
+
+            database.child("usuarios").get().addOnSuccessListener { snapshot ->
+                var nombreYaExiste = false
+
+                for (usuarioSnapshot in snapshot.children) {
+                    val usuarioExistente = usuarioSnapshot.child("nombreUsuario").value as? String
+                    if (usuarioExistente != null && usuarioExistente.equals(nombreUsuario, ignoreCase = true)) {
+                        nombreYaExiste = true
+                        break
+                    }
                 }
+
+                if (nombreYaExiste) {
+                    binding.editTextUsername.error = "Este nombre de usuario ya está en uso"
+                    return@addOnSuccessListener
+                }
+
+                val uid = FirebaseAuth.getInstance().currentUser!!.uid
+                val usuario = User(
+                    uid = uid,
+                    nombreUsuario = nombreUsuario,
+                    fotoPerfil = fotoSeleccionada
+                )
+
+                database.child("usuarios")
+                    .child(uid)
+                    .setValue(usuario)
+                    .addOnSuccessListener {
+                        startActivity(Intent(this, MainActivity::class.java))
+                        finish()
+                    }
+
+            }
         }
+
     }
 }

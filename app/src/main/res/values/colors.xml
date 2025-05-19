@@ -11,7 +11,8 @@
     <color name="green_principal">#027373</color>
     <color name="green_principal_light">#FF03DAC5</color>
     <color name="green_principal_dark">#014949</color>
-    <color name="green_secondary">#a8c0be</color>
+    <color name="green_secondary">#cbf7f4</color>
+    <color name="green_secondary_prov">#a8c0be</color>
     <color name="green_third">#C0DCD9</color>
     <color name="green_fourth">#D4F2EE</color>
 

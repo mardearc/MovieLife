@@ -7,6 +7,7 @@ import android.os.Bundle
 import android.util.Log
 import android.widget.Button
 import android.widget.EditText
+import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
@@ -97,21 +98,24 @@ class LoginActivity : AppCompatActivity() {
             .build()
         googleSignInClient = GoogleSignIn.getClient(this, gso)
 
-        findViewById<Button>(R.id.btnRegister).setOnClickListener {
-            val email = findViewById<EditText>(R.id.emailInput).text.toString()
-            val pass = findViewById<EditText>(R.id.passwordInput).text.toString()
-            auth.createUserWithEmailAndPassword(email, pass)
-                .addOnCompleteListener {
-                    if (it.isSuccessful) {
-                        startActivity(Intent(this, ElegirUsernameActivity::class.java))
-                    }
-                    else Toast.makeText(this, "Error al registrar", Toast.LENGTH_SHORT).show()
-                }
-        }
-
         findViewById<Button>(R.id.btnLogin).setOnClickListener {
-            val email = findViewById<EditText>(R.id.emailInput).text.toString()
-            val pass = findViewById<EditText>(R.id.passwordInput).text.toString()
+            val emailBox = findViewById<EditText>(R.id.emailInput)
+            val pass1 = findViewById<EditText>(R.id.passwordInput)
+
+            val email = emailBox.text.toString()
+            val pass = pass1.text.toString()
+
+            if (emailBox.text.isEmpty()) {
+                emailBox.error = "Correo requerido"
+                return@setOnClickListener
+            }
+
+            if (pass1.text.isEmpty()) {
+                pass1.error = "Contraseña requerida"
+                return@setOnClickListener
+            }
+
+
             auth.signInWithEmailAndPassword(email, pass)
                 .addOnCompleteListener {
                     if (it.isSuccessful) goToMain()
@@ -121,8 +125,14 @@ class LoginActivity : AppCompatActivity() {
 
         findViewById<Button>(R.id.btnGoogleSignIn).setOnClickListener {
             val signInIntent = googleSignInClient.signInIntent
-            signInLauncher.launch(signInIntent) // Usa el launcher para iniciar la actividad
+            signInLauncher.launch(signInIntent)
         }
+
+        findViewById<TextView>(R.id.goToRegister).setOnClickListener {
+            startActivity(Intent(this, RegisterActivity::class.java))
+            overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out)
+        }
+
     }
 
     private fun goToMain() {

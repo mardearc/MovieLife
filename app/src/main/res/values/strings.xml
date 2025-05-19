@@ -39,4 +39,15 @@
     <string name="publicar">Publicar</string>
     <string name="todo">TODO</string>
     <string name="mi_perfil">Mi Perfil</string>
+    <string name="iniciar_con_google">Iniciar con Google</string>
+    <string name="no_tienes_cuenta_registrate">¿No tienes cuenta? Regístrate</string>
+    <string name="entrar">Entrar</string>
+    <string name="contrasena">Contraseña</string>
+    <string name="correo_electronico">Correo electrónico</string>
+    <string name="iniciar_sesion">Iniciar Sesión</string>
+    <string name="repita_la_contrasena">Repita la contraseña</string>
+    <string name="registrarse">Registrarse</string>
+    <string name="volver_al_login">Volver al login</string>
+    <string name="movie_life">MOVIE LIFE</string>
+    <string name="movieland">MOVIELAND</string>
 </resources>

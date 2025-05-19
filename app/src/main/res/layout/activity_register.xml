@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:background="@drawable/fondologin"
-    android:gravity="center_horizontal"
+    android:layout_gravity="center_horizontal"
+    android:background="@drawable/fondoregist"
     android:orientation="vertical"
     android:padding="32dp">
 
@@ -12,7 +12,7 @@
         android:id="@+id/frameLayout"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
+        android:layout_gravity="bottom|center_horizontal"
         android:layout_marginTop="50dp">
 
         <TextView
@@ -25,7 +25,7 @@
             android:shadowDx="1"
             android:shadowDy="1"
             android:shadowRadius="8"
-            android:text="@string/movieland"
+            android:text="MOVIELAND"
             android:textAllCaps="true"
             android:textColor="@color/black"
             android:textSize="70sp"
@@ -48,8 +48,9 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:layout_marginTop="60dp">
+        android:layout_marginTop="60dp"
+        android:orientation="vertical">
+
 
         <EditText
             android:id="@+id/emailInput"
@@ -65,30 +66,30 @@
             android:id="@+id/passwordInput"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="24dp"
+            android:layout_marginBottom="12dp"
             android:background="@drawable/edittext_background"
             android:hint="@string/contrasena"
             android:inputType="textPassword"
             android:padding="16dp" />
 
-        <Button
-            android:id="@+id/btnLogin"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="12dp"
-            android:backgroundTint="@color/green_principal"
-            android:text="@string/entrar"
-            android:textColor="@android:color/white" />
-
-        <Button
-            android:id="@+id/btnGoogleSignIn"
+        <EditText
+            android:id="@+id/passwordInput2"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="24dp"
-            android:backgroundTint="@color/googleBlue"
-            android:drawableStart="@drawable/googleg_standard_color_18"
-            android:text="@string/iniciar_con_google"
-            android:textColor="@android:color/white"/>
+            android:background="@drawable/edittext_background"
+            android:hint="@string/repita_la_contrasena"
+            android:inputType="textPassword"
+            android:padding="16dp" />
+
+        <Button
+            android:id="@+id/btnRegist"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="12dp"
+            android:backgroundTint="@color/green_principal_light"
+            android:text="@string/registrarse"
+            android:textColor="@android:color/white" />
 
         <View
             android:layout_width="match_parent"
@@ -99,27 +100,20 @@
             android:background="@color/gris" />
 
         <TextView
-            android:id="@+id/goToRegister"
+            android:id="@+id/goToLogin"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:layout_marginBottom="48dp"
-            android:text="@string/no_tienes_cuenta_registrate"
-            android:textColor="@color/green_principal_dark" />
+            android:text="@string/volver_al_login"
+            android:textColor="@color/green_secondary" />
     </LinearLayout>
 
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+    <ImageView
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:contentDescription="TODO"
+        android:src="@drawable/logo_minimalist"
+        android:layout_gravity="center_horizontal"/>
 
-        <ImageView
-            android:layout_width="100dp"
-            android:layout_height="100dp"
-            android:contentDescription="TODO"
-            android:src="@drawable/logo_minimalist"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-    </androidx.constraintlayout.widget.ConstraintLayout>
 </LinearLayout>

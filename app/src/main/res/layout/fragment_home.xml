@@ -16,8 +16,9 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:tabIndicatorColor="@color/green_principal"
         app:tabIndicatorHeight="3dp"
-        app:tabSelectedTextColor="@color/green_secondary"
-        app:tabTextColor="@android:color/darker_gray" />
+        app:tabSelectedTextColor="@color/green_principal"
+        app:tabTextColor="@color/green_principal_grey"
+        android:backgroundTint="@color/green_secondary"/>
 
     <androidx.viewpager2.widget.ViewPager2
         android:id="@+id/viewPager"

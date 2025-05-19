@@ -1,8 +1,10 @@
 package com.example.movielife
 
+import android.graphics.Color
 import android.os.Bundle
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import com.example.movielife.databinding.ActivityOtherUserProfileBinding
 import com.google.android.material.tabs.TabLayoutMediator
 import com.google.firebase.auth.FirebaseAuth
@@ -23,29 +25,19 @@ class OtherUserProfileActivity : AppCompatActivity() {
         binding = ActivityOtherUserProfileBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        // Obtener los datos del usuario visualizado y el usuario actual
         viewedUserId = intent.getStringExtra("uid") ?: ""
         currentUserId = FirebaseAuth.getInstance().currentUser?.uid ?: ""
 
-        // Configurar ViewPager y TabLayout
         setupViewPagerAndTabs()
-
-        // Cargar la información del usuario
         loadUserInfo()
-
-        // Contar medios (películas y series vistas)
         countMedia()
-
-        // Configurar el botón de seguir
         setupFollowButton()
     }
 
     private fun setupViewPagerAndTabs() {
-        // Configurando el adaptador para el ViewPager
         val adapter = ProfilePagerAdapterActivity(this, viewedUserId)
         binding.viewPager.adapter = adapter
 
-        // Configurando las pestañas
         TabLayoutMediator(binding.tabLayout, binding.viewPager) { tab, position ->
             tab.text = when (position) {
                 0 -> "Comentarios"
@@ -64,7 +56,6 @@ class OtherUserProfileActivity : AppCompatActivity() {
                 user?.let {
                     binding.tvUsername.text = "@${it.nombreUsuario}"
 
-                    // Imagen de perfil
                     val context = applicationContext
                     val imgId = context.resources.getIdentifier(it.fotoPerfil, "drawable", context.packageName)
                     binding.imgPerfil.setImageResource(if (imgId != 0) imgId else R.drawable.ic_launcher_foreground)
@@ -140,5 +131,13 @@ class OtherUserProfileActivity : AppCompatActivity() {
 
     private fun updateFollowButton(sigue: Boolean) {
         binding.btnSeguir.text = if (sigue) "Siguiendo" else "Seguir"
+
+        if(!sigue){
+            binding.btnSeguir.setBackgroundColor(ContextCompat.getColor(this, R.color.green_principal))
+            binding.btnSeguir.textSize = 14F
+        }else{
+            binding.btnSeguir.setBackgroundColor(ContextCompat.getColor(this, R.color.green_secondary_prov))
+            binding.btnSeguir.textSize = 10F
+        }
     }
 }

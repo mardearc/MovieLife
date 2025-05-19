@@ -25,8 +25,7 @@ class HomeFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        // Aquí deberías obtener el UID del usuario logueado
-        uid = getCurrentUserUid() // Asegúrate de implementar este método
+        uid = getCurrentUserUid()
 
         adapter = HomePagerAdapter(this, uid)
         binding.viewPager.adapter = adapter
@@ -41,7 +40,7 @@ class HomeFragment : Fragment() {
     }
 
     private fun getCurrentUserUid(): String {
-        // Devuelve el UID del usuario actualmente autenticado (FirebaseAuth o el método que uses)
+
         return com.google.firebase.auth.FirebaseAuth.getInstance().currentUser?.uid
             ?: throw IllegalStateException("Usuario no autenticado")
     }

@@ -10,7 +10,6 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.movielife.PostAdapter
 import com.example.movielife.PostPelicula
 import com.example.movielife.User
-import com.example.movielife.databinding.FragmentHomeBinding
 import com.example.movielife.databinding.FragmentParatiHomeBinding
 import com.google.firebase.database.*
 

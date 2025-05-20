@@ -32,6 +32,10 @@ class OtherUserProfileActivity : AppCompatActivity() {
         loadUserInfo()
         countMedia()
         setupFollowButton()
+
+        binding.backButton.setOnClickListener(){
+            finish()
+        }
     }
 
     private fun setupViewPagerAndTabs() {

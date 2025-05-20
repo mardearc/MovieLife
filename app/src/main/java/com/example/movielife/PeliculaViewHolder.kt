@@ -10,7 +10,6 @@ class PeliculaViewHolder(view: View) : RecyclerView.ViewHolder(view) {
     private val binding = ItemPeliculaBinding.bind(view)
 
     fun bind(peliculaItemResponse: PeliculaItemResponse, onItemSelected: (Int) -> Unit){
-
         Picasso.get().load("https://image.tmdb.org/t/p/original/" + peliculaItemResponse.url).into(binding.ivPelicula);
 
         binding.root.setOnClickListener{onItemSelected(peliculaItemResponse.peliculaId) }

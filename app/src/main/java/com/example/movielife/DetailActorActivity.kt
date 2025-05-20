@@ -50,6 +50,10 @@ class DetailActorActivity : AppCompatActivity() {
             }
             isExpanded = !isExpanded
         }
+
+        binding.backButton.setOnClickListener{
+            finish()
+        }
     }
 
     // Obtengo la informacion del actor a traves del id que recibo del intent

@@ -12,6 +12,7 @@ import androidx.recyclerview.widget.GridLayoutManager
 import com.example.movielife.ApiService
 import com.example.movielife.DetailPeliculaActivity
 import com.example.movielife.DetailPeliculaActivity.Companion.EXTRA_ID
+import com.example.movielife.DetailSerieActivity
 import com.example.movielife.PeliculaAdapter
 import com.example.movielife.PeliculaItemResponse
 import com.example.movielife.SerieAdapter
@@ -51,7 +52,7 @@ class ProfileHistorialFragment : Fragment(){
         binding.recyclerViewHistorialPeliculas.layoutManager = GridLayoutManager(requireContext(), 4)
         binding.recyclerViewHistorialPeliculas.adapter = peliculaAdapter
 
-        serieAdapter = SerieAdapter { navigateToDetail(it) }
+        serieAdapter = SerieAdapter { navigateToDetailSerie(it) }
         binding.recyclerViewHistorialSeries.setHasFixedSize(true)
         binding.recyclerViewHistorialSeries.layoutManager = GridLayoutManager(requireContext(), 4)
         binding.recyclerViewHistorialSeries.adapter = serieAdapter
@@ -183,6 +184,12 @@ class ProfileHistorialFragment : Fragment(){
 
     private fun navigateToDetail(id: Int) {
         val intent = Intent(requireContext(), DetailPeliculaActivity::class.java)
+        intent.putExtra(EXTRA_ID, id)
+        startActivity(intent)
+    }
+
+    private fun navigateToDetailSerie(id: Int) {
+        val intent = Intent(requireContext(), DetailSerieActivity::class.java)
         intent.putExtra(EXTRA_ID, id)
         startActivity(intent)
     }

@@ -11,21 +11,21 @@
         <item
             android:id="@+id/nav_movies"
             android:title="@string/peliculas"
-            android:icon="@drawable/ic_menu_camera" />
+            android:icon="@drawable/pelicula" />
         <item
             android:id="@+id/nav_series"
             android:title="@string/series"
-            android:icon="@drawable/ic_menu_camera" />
+            android:icon="@drawable/serie" />
 
         <item
             android:id="@+id/nav_watchlist"
             android:title="@string/watchlist"
-            android:icon="@drawable/ic_menu_camera" />
+            android:icon="@drawable/watchlist" />
 
         <item
             android:id="@+id/nav_profile"
-            android:title="Mi Perfil"
-            android:icon="@drawable/ic_menu_camera" />
+            android:title="@string/mi_perfil"
+            android:icon="@drawable/user" />
 
     </group>
 </menu>

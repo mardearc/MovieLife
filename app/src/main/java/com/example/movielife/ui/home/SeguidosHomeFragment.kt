@@ -7,8 +7,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.example.movielife.PostPeliculaAdapter
-import com.example.movielife.PostPelicula
+import com.example.movielife.PostAdapter
+import com.example.movielife.Post
 import com.example.movielife.User
 import com.example.movielife.databinding.FragmentSeguidosHomeBinding
 import com.google.firebase.database.DataSnapshot
@@ -19,9 +19,9 @@ import com.google.firebase.database.ValueEventListener
 class SeguidosHomeFragment : Fragment() {
 
     private lateinit var binding: FragmentSeguidosHomeBinding
-    private val postList = mutableListOf<PostPelicula>()
+    private val postList = mutableListOf<Post>()
     private val userMap = mutableMapOf<String, User>()
-    private lateinit var adapter: PostPeliculaAdapter
+    private lateinit var adapter: PostAdapter
     private lateinit var uid: String
 
     companion object {
@@ -47,7 +47,7 @@ class SeguidosHomeFragment : Fragment() {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        adapter = PostPeliculaAdapter(postList, userMap)
+        adapter = PostAdapter(postList, userMap)
         binding.recyclerViewPosts.layoutManager = LinearLayoutManager(requireContext())
         binding.recyclerViewPosts.adapter = adapter
 
@@ -69,7 +69,7 @@ class SeguidosHomeFragment : Fragment() {
 
                 if (followedUids.isEmpty()) {
                     Log.d("SeguidosLog", "El usuario no sigue a nadie.")
-                    binding.recyclerViewPosts.adapter = PostPeliculaAdapter(emptyList(), emptyMap())
+                    binding.recyclerViewPosts.adapter = PostAdapter(emptyList(), emptyMap())
                     return
                 }
 
@@ -87,11 +87,11 @@ class SeguidosHomeFragment : Fragment() {
 
         postsRef.addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
-                val filteredPosts = mutableListOf<PostPelicula>()
+                val filteredPosts = mutableListOf<Post>()
                 val uidsInPosts = mutableSetOf<String>()
 
                 for (child in snapshot.children) {
-                    val post = child.getValue(PostPelicula::class.java)
+                    val post = child.getValue(Post::class.java)
                     if (post != null && followedUids.contains(post.uid)) {
                         filteredPosts.add(post)
                         uidsInPosts.add(post.uid)
@@ -108,13 +108,13 @@ class SeguidosHomeFragment : Fragment() {
         })
     }
 
-    private fun fetchUsersAndSetAdapter(postList: List<PostPelicula>, uidSet: Set<String>) {
+    private fun fetchUsersAndSetAdapter(postList: List<Post>, uidSet: Set<String>) {
         val usuariosRef = FirebaseDatabase.getInstance().getReference("usuarios")
         val userMap = mutableMapOf<String, User>()
         var fetchedUsers = 0
 
         if (uidSet.isEmpty()) {
-            binding.recyclerViewPosts.adapter = PostPeliculaAdapter(postList, userMap)
+            binding.recyclerViewPosts.adapter = PostAdapter(postList, userMap)
             return
         }
 
@@ -128,7 +128,7 @@ class SeguidosHomeFragment : Fragment() {
 
                     fetchedUsers++
                     if (fetchedUsers == uidSet.size) {
-                        binding.recyclerViewPosts.adapter = PostPeliculaAdapter(postList, userMap)
+                        binding.recyclerViewPosts.adapter = PostAdapter(postList, userMap)
                     }
                 }
 

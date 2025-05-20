@@ -61,9 +61,9 @@ class DetailPeliculaActivity : AppCompatActivity() {
         binding.recyclerViewPost.layoutManager = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
 
         binding.fab.setOnClickListener {
-            val bottomSheet = MovieActionsBottomSheet(movieId = id, posterPath = posterPath) { watchlist, watched, comment, rating ->
+            val bottomSheet = MovieActionsBottomSheet(movieId = id, posterPath = posterPath) { watchlist, watched, comment, rating, tipo ->
 
-                Log.d("MovieActions", "Watchlist: $watchlist, Watched: $watched, Comment: $comment, Rating: $rating")
+                Log.d("MovieActions", "Watchlist: $watchlist, Watched: $watched, Comment: $comment, Rating: $rating, Tipo: $tipo")
             }
             bottomSheet.show(supportFragmentManager, "MovieActionsBottomSheet")
         }
@@ -91,19 +91,19 @@ class DetailPeliculaActivity : AppCompatActivity() {
 
                 if (postIds.isEmpty()) {
                     Log.d("PostLog", "No se encontraron posts para la película con ID $id")
-                    binding.recyclerViewPost.adapter = PostPeliculaAdapter(emptyList(), emptyMap())
+                    binding.recyclerViewPost.adapter = PostAdapter(emptyList(), emptyMap())
                     return
                 }
 
                 val postsRef = database.getReference("postspeliculas")
-                val postList = mutableListOf<PostPelicula>()
+                val postList = mutableListOf<Post>()
                 val uidSet = mutableSetOf<String>()
                 var fetchedPosts = 0
 
                 for (postId in postIds) {
                     postsRef.child(postId).addListenerForSingleValueEvent(object : ValueEventListener {
                         override fun onDataChange(postSnapshot: DataSnapshot) {
-                            val post = postSnapshot.getValue(PostPelicula::class.java)
+                            val post = postSnapshot.getValue(Post::class.java)
                             if (post != null) {
                                 postList.add(post)
                                 uidSet.add(post.uid)
@@ -132,7 +132,7 @@ class DetailPeliculaActivity : AppCompatActivity() {
         })
     }
 
-    private fun fetchUsersAndSetAdapter(postList: List<PostPelicula>, uidSet: Set<String>) {
+    private fun fetchUsersAndSetAdapter(postList: List<Post>, uidSet: Set<String>) {
         val database = FirebaseDatabase.getInstance()
         val usuariosRef = database.getReference("usuarios")
         val userMap = mutableMapOf<String, User>()
@@ -140,7 +140,7 @@ class DetailPeliculaActivity : AppCompatActivity() {
 
         if (uidSet.isEmpty()) {
             Log.d("PostLog", "No hay usuarios a recuperar")
-            binding.recyclerViewPost.adapter = PostPeliculaAdapter(postList, userMap)
+            binding.recyclerViewPost.adapter = PostAdapter(postList, userMap)
             return
         }
 
@@ -159,7 +159,7 @@ class DetailPeliculaActivity : AppCompatActivity() {
                     fetchedUsers++
                     if (fetchedUsers == uidSet.size) {
                         Log.d("PostLog", "Usuarios recuperados: ${userMap.size}")
-                        binding.recyclerViewPost.adapter = PostPeliculaAdapter(postList, userMap)
+                        binding.recyclerViewPost.adapter = PostAdapter(postList, userMap)
                     }
                 }
 

@@ -14,6 +14,8 @@ import com.example.movielife.DetailPeliculaActivity
 import com.example.movielife.DetailPeliculaActivity.Companion.EXTRA_ID
 import com.example.movielife.PeliculaAdapter
 import com.example.movielife.PeliculaItemResponse
+import com.example.movielife.SerieAdapter
+import com.example.movielife.SerieItemResponse
 import com.example.movielife.databinding.FragmentProfileHistorialBinding
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.GenericTypeIndicator
@@ -29,7 +31,8 @@ class ProfileHistorialFragment : Fragment(){
     private lateinit var binding:FragmentProfileHistorialBinding
 
     private lateinit var retrofit: Retrofit
-    private lateinit var adapter: PeliculaAdapter
+    private lateinit var peliculaAdapter: PeliculaAdapter
+    private lateinit var serieAdapter: SerieAdapter
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
@@ -43,10 +46,16 @@ class ProfileHistorialFragment : Fragment(){
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        adapter = PeliculaAdapter { navigateToDetail(it) }
-        binding.recyclerViewHistorial.setHasFixedSize(true)
-        binding.recyclerViewHistorial.layoutManager = GridLayoutManager(requireContext(), 4)
-        binding.recyclerViewHistorial.adapter = adapter
+        peliculaAdapter = PeliculaAdapter { navigateToDetail(it) }
+        binding.recyclerViewHistorialPeliculas.setHasFixedSize(true)
+        binding.recyclerViewHistorialPeliculas.layoutManager = GridLayoutManager(requireContext(), 4)
+        binding.recyclerViewHistorialPeliculas.adapter = peliculaAdapter
+
+        serieAdapter = SerieAdapter { navigateToDetail(it) }
+        binding.recyclerViewHistorialSeries.setHasFixedSize(true)
+        binding.recyclerViewHistorialSeries.layoutManager = GridLayoutManager(requireContext(), 4)
+        binding.recyclerViewHistorialSeries.adapter = serieAdapter
+
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -66,11 +75,8 @@ class ProfileHistorialFragment : Fragment(){
 
 
     private fun initUI() {
-        adapter = PeliculaAdapter { navigateToDetail(it) }
-        binding.recyclerViewHistorial.setHasFixedSize(true)
-        binding.recyclerViewHistorial.layoutManager = GridLayoutManager(requireContext(), 4)
-        binding.recyclerViewHistorial.adapter = adapter
         searchPeliculasVistas()
+        searchSeriesVistas()
     }
 
     private fun searchPeliculasVistas() {
@@ -83,12 +89,58 @@ class ProfileHistorialFragment : Fragment(){
                 getPeliculaData(idList)
             } else {
                 requireActivity().runOnUiThread {
-                    adapter.updateList(emptyList())
+                    peliculaAdapter.updateList(emptyList())
                     binding.pbBuscador.isVisible = false
                 }
             }
         }
     }
+
+    private fun searchSeriesVistas() {
+        val database = FirebaseDatabase.getInstance().reference.child("usuarios").child(uid)
+
+        binding.pbBuscador2.isVisible = true
+        database.child("seriesVistas").get().addOnSuccessListener { snapshot ->
+            val idList = snapshot.getValue(object : GenericTypeIndicator<List<String>>() {}) ?: listOf()
+            if (idList.isNotEmpty()) {
+                getSerieData(idList)
+            } else {
+                requireActivity().runOnUiThread {
+                    serieAdapter.updateList(emptyList())
+                    binding.pbBuscador2.isVisible = false
+                }
+            }
+        }
+    }
+
+    private fun getSerieData(ids: List<String>) {
+        val apiService = retrofit.create(ApiService::class.java)
+        val apiKey = "cef2d5efc3c68480cb48f48b33b29de4"
+        val language = "es-ES"
+
+        val seriesList = mutableListOf<SerieItemResponse>()
+
+        CoroutineScope(Dispatchers.IO).launch {
+            for (id in ids) {
+                try {
+                    val response = apiService.getSerieByIdItem(id.toInt(), apiKey, language)
+                    if (response.isSuccessful) {
+                        response.body()?.let { serie ->
+                            seriesList.add(serie)
+                        }
+                    }
+                } catch (e: Exception) {
+                    Log.e("mardearc", "Error cargando serie ID $id: ${e.message}")
+                }
+            }
+
+            requireActivity().runOnUiThread {
+                serieAdapter.updateList(seriesList)
+                binding.pbBuscador2.isVisible = false
+            }
+        }
+    }
+
 
     private fun getPeliculaData(ids: List<String>) {
         val apiService = retrofit.create(ApiService::class.java)
@@ -112,7 +164,7 @@ class ProfileHistorialFragment : Fragment(){
             }
 
             requireActivity().runOnUiThread {
-                adapter.updateList(peliculasList)
+                peliculaAdapter.updateList(peliculasList)
                 binding.pbBuscador.isVisible = false
             }
         }

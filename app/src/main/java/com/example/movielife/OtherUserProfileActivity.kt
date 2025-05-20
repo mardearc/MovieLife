@@ -1,11 +1,11 @@
 package com.example.movielife
 
-import android.graphics.Color
 import android.os.Bundle
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import com.example.movielife.databinding.ActivityOtherUserProfileBinding
+import com.example.movielife.ui.profile.ProfilePagerAdapterActivity
 import com.google.android.material.tabs.TabLayoutMediator
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DataSnapshot

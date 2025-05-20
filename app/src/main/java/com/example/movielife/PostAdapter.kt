@@ -7,8 +7,8 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.movielife.DetailPeliculaActivity.Companion.EXTRA_ID
 import com.squareup.picasso.Picasso
 
-class PostPeliculaAdapter(
-    private val postList: List<PostPelicula>,
+class PostAdapter(
+    private val postList: List<Post>,
     private val userMap: Map<String, User>
 ) : RecyclerView.Adapter<PostViewHolder>() {
 
@@ -34,7 +34,13 @@ class PostPeliculaAdapter(
         Picasso.get().load("https://image.tmdb.org/t/p/w500${post.posterPath}").into(holder.imgMoviePoster)
 
         holder.imgMoviePoster.setOnClickListener{
-            val intent = Intent(contexto, DetailPeliculaActivity::class.java)
+            var intent: Intent?
+            if(post.tipo=="pelicula"){
+                intent = Intent(contexto, DetailPeliculaActivity::class.java)
+            }else{
+                intent = Intent(contexto, DetailSerieActivity::class.java)
+            }
+
             intent.putExtra(EXTRA_ID, post.peliculaId)
             contexto.startActivity(intent)
         }

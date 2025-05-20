@@ -116,12 +116,13 @@ class SerieActionsBottomSheet(
         val postsRef = database.getReference("postsseries")
 
         val uid = FirebaseAuth.getInstance().currentUser?.uid ?: return
-        val post = PostPelicula(
+        val post = Post(
             peliculaId = peliculaId,
             uid = uid,
             comentario = comentario,
             valoracion = valoracion,
-            posterPath = posterPath
+            posterPath = posterPath,
+            tipo = "serie"
         )
 
         val nuevoPostRef = postsRef.push()

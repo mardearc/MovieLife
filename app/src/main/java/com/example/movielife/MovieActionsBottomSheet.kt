@@ -15,7 +15,7 @@ import com.google.firebase.database.GenericTypeIndicator
 class MovieActionsBottomSheet(
     private var movieId: Int,
     private var posterPath : String,
-    private val onActionsConfirmed: (watchlist: Boolean, watched: Boolean, comment: String, rating: Float) -> Unit
+    private val onActionsConfirmed: (watchlist: Boolean, watched: Boolean, comment: String, rating: Float, tipo: String) -> Unit
 ) : BottomSheetDialogFragment() {
 
     private lateinit var checkWatchlist: CheckBox
@@ -67,6 +67,7 @@ class MovieActionsBottomSheet(
             val watched = checkWatched.isChecked
             val comment = commentEditText.text.toString()
             val rating = ratingBar.rating
+            val tipo = "pelicula"
 
             if (uid != null) {
                 val database = FirebaseDatabase.getInstance().reference.child("usuarios").child(uid)
@@ -104,7 +105,7 @@ class MovieActionsBottomSheet(
             }
 
 
-            onActionsConfirmed(watchlist, watched, comment, rating)
+            onActionsConfirmed(watchlist, watched, comment, rating, tipo)
             dismiss()
         }
 
@@ -116,12 +117,13 @@ class MovieActionsBottomSheet(
         val postsRef = database.getReference("postspeliculas")
 
         val uid = FirebaseAuth.getInstance().currentUser?.uid ?: return
-        val post = PostPelicula(
+        val post = Post(
             peliculaId = peliculaId,
             uid = uid,
             comentario = comentario,
             valoracion = valoracion,
-            posterPath = posterPath
+            posterPath = posterPath,
+            tipo = "pelicula"
         )
 
         val nuevoPostRef = postsRef.push()

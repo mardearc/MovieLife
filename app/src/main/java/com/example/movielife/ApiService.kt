@@ -96,6 +96,13 @@ interface ApiService {
         @Query("language") language: String = "es-ES"
     ): Response<SerieDetailResponse>
 
+    @GET("tv/{id}")
+    suspend fun getSerieByIdItem(
+        @Path("id") movieId: Int,
+        @Query("api_key") apiKey: String,
+        @Query("language") language: String = "es-ES"
+    ): Response<SerieItemResponse>
+
     @GET("tv/{id}/watch/providers")
     suspend fun getPlataformasSeries(
         @Path("id") movieId: Int,

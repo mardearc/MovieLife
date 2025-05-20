@@ -7,8 +7,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.example.movielife.PostPeliculaAdapter
-import com.example.movielife.PostPelicula
+import com.example.movielife.PostAdapter
+import com.example.movielife.Post
 import com.example.movielife.User
 import com.example.movielife.databinding.FragmentProfilePostBinding
 import com.google.firebase.database.DataSnapshot
@@ -20,9 +20,9 @@ class ProfilePostFragment : Fragment() {
 
     private lateinit var uid: String
     private lateinit var binding: FragmentProfilePostBinding
-    private val postList = mutableListOf<PostPelicula>()
+    private val postList = mutableListOf<Post>()
     private val userMap = mutableMapOf<String, User>()
-    private lateinit var adapter: PostPeliculaAdapter
+    private lateinit var adapter: PostAdapter
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
@@ -38,7 +38,7 @@ class ProfilePostFragment : Fragment() {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        adapter = PostPeliculaAdapter(postList, userMap)
+        adapter = PostAdapter(postList, userMap)
         binding.recyclerViewPosts.layoutManager = LinearLayoutManager(requireContext())
         binding.recyclerViewPosts.adapter = adapter
     }
@@ -67,18 +67,18 @@ class ProfilePostFragment : Fragment() {
 
                 if (postIds.isEmpty()) {
                     Log.d("ProfilePostLog", "El usuario no tiene posts")
-                    binding.recyclerViewPosts.adapter = PostPeliculaAdapter(emptyList(), emptyMap())
+                    binding.recyclerViewPosts.adapter = PostAdapter(emptyList(), emptyMap())
                     return
                 }
 
-                val postList = mutableListOf<PostPelicula>()
+                val postList = mutableListOf<Post>()
                 val userMap = mutableMapOf<String, User>()
                 var fetchedPosts = 0
 
                 for (postId in postIds) {
                     postsRef.child(postId).addListenerForSingleValueEvent(object : ValueEventListener {
                         override fun onDataChange(postSnapshot: DataSnapshot) {
-                            val post = postSnapshot.getValue(PostPelicula::class.java)
+                            val post = postSnapshot.getValue(Post::class.java)
                             if (post != null) {
                                 postList.add(post)
                             }
@@ -96,7 +96,7 @@ class ProfilePostFragment : Fragment() {
                                                 userMap[uid] = user
                                             }
                                             binding.recyclerViewPosts.adapter =
-                                                PostPeliculaAdapter(postListOrdenado, userMap)
+                                                PostAdapter(postListOrdenado, userMap)
                                         }
 
                                         override fun onCancelled(error: DatabaseError) {

@@ -64,8 +64,15 @@ interface ApiService {
         @Query("language") language: String = "es-ES"
     ): MovieCreditsResponse
 
-    @GET("movie/{movie_id}/credits")
+    @GET("person/{person_id}/movie_credits")
     suspend fun getMovieCrew(
+        @Path("person_id") personId: Int,
+        @Query("api_key") apiKey: String,
+        @Query("language") language: String = "es-ES"
+    ): MovieCrewResponse
+
+    @GET("movie/{movie_id}/credits")
+    suspend fun getCrew(
         @Path("movie_id") movieId: Int,
         @Query("api_key") apiKey: String,
         @Query("language") language: String = "es-ES"
@@ -115,5 +122,12 @@ interface ApiService {
         @Query("api_key") apiKey: String,
         @Query("language") language: String = "es-ES"
     ): Response<ActorDataResponse>
+
+    @GET("tv/{id}/credits")
+    suspend fun getSerieCreditsCrew(
+        @Path("id") movieId: Int,
+        @Query("api_key") apiKey: String,
+        @Query("language") language: String = "es-ES"
+    ): Response<CrewDataResponse>
 }
 

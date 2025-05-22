@@ -9,7 +9,7 @@ data class ActorDataResponse(
 
 data class CrewDataResponse(
     @SerializedName("id") val id :Int,
-    @SerializedName("crew") val cast :List<CrewItemResponse>
+    @SerializedName("crew") val crew :List<CrewItemResponse>
 )
 
 data class CrewItemResponse(

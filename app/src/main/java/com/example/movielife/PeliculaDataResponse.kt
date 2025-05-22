@@ -9,7 +9,7 @@ data class PeliculaDataResponse(
 
 data class PeliculaItemResponse(
     @SerializedName("id") val peliculaId: Int,
-    @SerializedName("title") val peliculaTitulo: String,
+    @SerializedName("title") val peliculaTitulo: String?,
     @SerializedName("poster_path") val url: String
 )
 
@@ -50,6 +50,10 @@ data class Provider(
 
 data class MovieCreditsResponse(
     @SerializedName("cast") val cast: List<PeliculaResponse>
+)
+
+data class MovieCrewResponse(
+    @SerializedName("crew") val crew: List<PeliculaResponse>
 )
 
 data class PeliculaResponse(

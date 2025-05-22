@@ -34,6 +34,7 @@ class DetailSerieActivity : AppCompatActivity() {
 
     private lateinit var posterPath : String
 
+    private lateinit var adapterCrew: CrewAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -48,6 +49,12 @@ class DetailSerieActivity : AppCompatActivity() {
         binding.recyclerView.setHasFixedSize(true)
         binding.recyclerView.layoutManager = LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
         binding.recyclerView.adapter = adapter
+
+        adapterCrew = CrewAdapter{navigateToCrewDetail(it)}
+        binding.recyclerViewCrew.setHasFixedSize(true)
+        binding.recyclerViewCrew.layoutManager = LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
+        binding.recyclerViewCrew.adapter = adapterCrew
+
 
         binding.recyclerViewPost.setHasFixedSize(true)
         binding.recyclerViewPost.layoutManager = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
@@ -246,6 +253,19 @@ class DetailSerieActivity : AppCompatActivity() {
                 }
             }
 
+            // Crew
+            val crewDetail =
+                getRetrofit().create(ApiService::class.java).getSerieCreditsCrew(id, apiKey)
+
+            if (crewDetail.isSuccessful) {
+                val crew = crewDetail.body()
+                if (crew != null) {
+                    runOnUiThread {
+                        adapterCrew.updateList(crew.crew)
+                    }
+
+                }
+            }
         }
     }
 
@@ -301,6 +321,14 @@ class DetailSerieActivity : AppCompatActivity() {
     private fun navigateToActorDetail(id: Int) {
         val intent = Intent(this, DetailActorActivity::class.java)
         intent.putExtra(ACTOR_ID, id)
+        intent.putExtra(DetailActorActivity.EXTRA_ROLE, "actor")
+        startActivity(intent)
+    }
+
+    private fun navigateToCrewDetail(id: Int) {
+        val intent = Intent(this, DetailActorActivity::class.java)
+        intent.putExtra(ACTOR_ID, id)
+        intent.putExtra(DetailActorActivity.EXTRA_ROLE, "crew")
         startActivity(intent)
     }
 }

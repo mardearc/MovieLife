@@ -5,6 +5,8 @@ import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
+import android.view.Menu
+import android.view.MenuInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.widget.SearchView
@@ -35,7 +37,7 @@ class MoviesFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         binding =FragmentMoviesBinding.inflate(layoutInflater)
-
+        setHasOptionsMenu(true)
         retrofit = getRetrofit()
         initUI()
 
@@ -44,24 +46,36 @@ class MoviesFragment : Fragment() {
 
     }
 
-    private fun initUI() {
-        // Busqueda
-        binding.searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        inflater.inflate(R.menu.menu_busqueda, menu)
+
+        val searchItem = menu.findItem(R.id.action_search)
+        val searchView = searchItem.actionView as SearchView
+
+        searchView.queryHint = "Buscar película..."
+
+        searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {
-                searchByName(query.orEmpty())
-                return false
+                // Realizar la búsqueda
+                query?.let { searchByName(it) }
+                return true
             }
 
             override fun onQueryTextChange(query: String?): Boolean {
                 query?.let {
                     if (it.isNotBlank()) {
                         searchByName(query)
+                    }else{
+                        popularPeliculas()
                     }
                 }
                 return true
             }
         })
+    }
 
+
+    private fun initUI() {
         adapter = PeliculaAdapter { navigateToDetail(it) }
         binding.recyclerView.setHasFixedSize(true)
         binding.recyclerView.layoutManager = GridLayoutManager(requireContext(), 2)

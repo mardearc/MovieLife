@@ -5,6 +5,8 @@ import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
+import android.view.Menu
+import android.view.MenuInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.widget.SearchView
@@ -33,9 +35,9 @@ class SeriesFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        // Inflate the layout for this fragment
-        binding = FragmentSeriesBinding.inflate(layoutInflater)
 
+        binding = FragmentSeriesBinding.inflate(layoutInflater)
+        setHasOptionsMenu(true)
         retrofit = getRetrofit()
         initUI()
 
@@ -44,33 +46,44 @@ class SeriesFragment : Fragment() {
 
     }
 
-    private fun initUI() {
-        // Busqueda
-        binding.searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        inflater.inflate(R.menu.menu_busqueda, menu)
+
+        val searchItem = menu.findItem(R.id.action_search)
+        val searchView = searchItem.actionView as SearchView
+
+        searchView.queryHint = "Buscar película..."
+
+        searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {
-                searchByName(query.orEmpty())
-                return false
+                // Realizar la búsqueda
+                query?.let { searchByName(it) }
+                return true
             }
 
             override fun onQueryTextChange(query: String?): Boolean {
                 query?.let {
                     if (it.isNotBlank()) {
                         searchByName(query)
+                    }else{
+                        popularSeries()
                     }
                 }
                 return true
             }
         })
+    }
 
+    private fun initUI() {
         adapter = SerieAdapter { navigateToDetail(it) }
         binding.recyclerView.setHasFixedSize(true)
         binding.recyclerView.layoutManager = GridLayoutManager(requireContext(), 2)
         binding.recyclerView.adapter = adapter
-        popularPeliculas()
+        popularSeries()
 
     }
 
-    private fun popularPeliculas() {
+    private fun popularSeries() {
         val apiKey = "cef2d5efc3c68480cb48f48b33b29de4"
         val language = "es-ES"
         val page = 1

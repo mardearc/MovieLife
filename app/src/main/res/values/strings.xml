@@ -55,4 +55,6 @@
     <string name="elige_tu_nombre_de_usuario_y_foto_de_perfil">Elige tu nombre de usuario y foto de perfil</string>
     <string name="imagen_de_perfil">Imagen de perfil</string>
     <string name="comentarios">Comentarios</string>
+    <string name="cerrar_sesion">Cerrar sesión</string>
+    <string name="buscar">Buscar</string>
 </resources>

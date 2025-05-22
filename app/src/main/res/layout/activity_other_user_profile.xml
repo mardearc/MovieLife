@@ -65,7 +65,6 @@
                         android:id="@+id/tvPeliculasCount"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginEnd="16dp"
                         android:text="35"
                         android:textSize="20sp"
                         android:layout_gravity="center_horizontal"
@@ -78,8 +77,7 @@
                         android:id="@+id/tvPeliculas"
                         android:textSize="18sp"
                         android:text="@string/peliculas"
-                        android:textColor="@color/black"
-                        android:layout_marginEnd="16dp"/>
+                        android:textColor="@color/black"/>
 
                 </LinearLayout>
 
@@ -104,8 +102,7 @@
                         android:id="@+id/tvSeries"
                         android:text="@string/series"
                         android:textSize="18sp"
-                        android:textColor="@color/black"
-                        android:layout_marginEnd="16dp"/>
+                        android:textColor="@color/black"/>
                 </LinearLayout>
             </LinearLayout>
         </LinearLayout>

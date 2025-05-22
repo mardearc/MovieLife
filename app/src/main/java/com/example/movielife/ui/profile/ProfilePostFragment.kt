@@ -35,6 +35,8 @@ class ProfilePostFragment : Fragment() {
         super.onCreate(savedInstanceState)
         uid = arguments?.getString("uid") ?: ""
         cargarPostsDeUsuario(uid)
+
+
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

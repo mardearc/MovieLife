@@ -1,10 +1,17 @@
 package com.example.movielife.ui.profile
 
+import android.app.AlertDialog
+import android.content.Intent
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
+import android.view.Menu
+import android.view.MenuInflater
+import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
+import com.example.movielife.ElegirUsernameActivity
+import com.example.movielife.LoginActivity
 import com.example.movielife.R
 import com.example.movielife.User
 import com.example.movielife.databinding.FragmentProfileBinding
@@ -40,7 +47,6 @@ class ProfileFragment : Fragment() {
         }.attach()
 
         countMedia()
-        setupFollowButton()
         loadUserInfo()
         return binding.root
     }
@@ -49,6 +55,7 @@ class ProfileFragment : Fragment() {
         super.onCreate(savedInstanceState)
         viewedUserId = arguments?.getString("uid") ?: ""
         currentUserId = FirebaseAuth.getInstance().currentUser?.uid ?: ""
+        setHasOptionsMenu(true)
     }
 
 
@@ -96,44 +103,53 @@ class ProfileFragment : Fragment() {
         })
     }
 
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        inflater.inflate(R.menu.main, menu)
+        super.onCreateOptionsMenu(menu, inflater)
+    }
 
-    private fun setupFollowButton() {
-        if (viewedUserId == currentUserId) {
-            binding.btnSeguir.visibility = View.GONE
-            return
-        }
-
-        val followRef = FirebaseDatabase.getInstance().getReference("seguidores").child(currentUserId)
-
-        followRef.child(viewedUserId).addListenerForSingleValueEvent(object : ValueEventListener {
-            override fun onDataChange(snapshot: DataSnapshot) {
-                val sigue = snapshot.exists()
-                updateFollowButton(sigue)
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when (item.itemId) {
+            R.id.action_cerrar_sesion -> {
+                mostrarDialogoCerrarSesion()
+                true
             }
-
-            override fun onCancelled(error: DatabaseError) {}
-        })
-
-        binding.btnSeguir.setOnClickListener {
-            val ref = FirebaseDatabase.getInstance().getReference("seguidores").child(currentUserId)
-
-            ref.child(viewedUserId).addListenerForSingleValueEvent(object : ValueEventListener {
-                override fun onDataChange(snapshot: DataSnapshot) {
-                    if (snapshot.exists()) {
-                        ref.child(viewedUserId).removeValue()
-                        updateFollowButton(false)
-                    } else {
-                        ref.child(viewedUserId).setValue(true)
-                        updateFollowButton(true)
-                    }
-                }
-
-                override fun onCancelled(error: DatabaseError) {}
-            })
+            R.id.action_editar_perfil ->{
+//                editarPerfil()
+                true
+            }
+            else -> super.onOptionsItemSelected(item)
         }
     }
 
-    private fun updateFollowButton(sigue: Boolean) {
-        binding.btnSeguir.text = if (sigue) "Siguiendo" else "Seguir"
+//    private fun editarPerfil(){
+//        val intent = Intent(requireContext(), ElegirUsernameActivity::class.java)
+//        startActivity(intent)
+//    }
+
+    private fun mostrarDialogoCerrarSesion() {
+        val dialog = AlertDialog.Builder(requireContext()).create()
+        dialog.setTitle("Cerrar sesión")
+        dialog.setMessage("¿Seguro que quieres cerrar sesión?")
+
+        dialog.setButton(AlertDialog.BUTTON_NEGATIVE, "No") { _, _ ->
+            dialog.dismiss()
+        }
+
+        dialog.setButton(AlertDialog.BUTTON_POSITIVE, "Sí") { _, _ ->
+            FirebaseAuth.getInstance().signOut()
+            val intent = Intent(requireContext(), LoginActivity::class.java)
+            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+            startActivity(intent)
+        }
+
+
+
+        dialog.show()
+
     }
+
+
+
+
 }

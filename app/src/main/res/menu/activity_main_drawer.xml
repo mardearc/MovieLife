@@ -23,6 +23,11 @@
             android:icon="@drawable/watchlist" />
 
         <item
+            android:id="@+id/nav_search"
+            android:title="@string/buscar"
+            android:icon="?android:attr/actionModeWebSearchDrawable" />
+
+        <item
             android:id="@+id/nav_profile"
             android:title="@string/mi_perfil"
             android:icon="@drawable/user" />

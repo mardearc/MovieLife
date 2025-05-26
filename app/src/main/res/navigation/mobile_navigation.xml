@@ -30,6 +30,12 @@
         tools:layout="@layout/fragment_watchlist" />
 
     <fragment
+        android:id="@+id/nav_search"
+        android:name="com.example.movielife.ui.search.SearchFragment"
+        android:label="@string/buscar"
+        tools:layout="@layout/fragment_search" />
+
+    <fragment
         android:id="@+id/nav_profile"
         android:name="com.example.movielife.ui.profile.ProfileFragment"
         android:label="@string/mi_perfil"

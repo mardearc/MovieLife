@@ -1,7 +1,6 @@
-package com.example.movielife
+package com.example.movielife.ui.adapters
 
 import android.content.Intent
-import com.squareup.picasso.Picasso
 
 import android.view.LayoutInflater
 import android.view.View
@@ -9,6 +8,9 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import com.example.movielife.ui.profile.OtherUserProfileActivity
+import com.example.movielife.R
+import com.example.movielife.model.User
 
 class SearchUserAdapter(
     private var listaUsuarios: List<User>

@@ -1,4 +1,4 @@
-package com.example.movielife
+package com.example.movielife.ui.movies
 
 import android.annotation.SuppressLint
 import android.os.Bundle
@@ -8,16 +8,19 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.*
 import androidx.core.content.ContextCompat
+import com.example.movielife.model.Post
+import com.example.movielife.R
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.GenericTypeIndicator
 
-class SerieActionsBottomSheet(
-    private var serieId: Int,
-    private var posterPath : String,
-    private val onActionsConfirmed: (watchlist: Boolean, watched: Boolean, comment: String, rating: Float) -> Unit
+class MovieActionsBottomSheet(
+    private var movieId: Int,
+    private var posterPath: String,
+    private val onActionsConfirmed: (watchlist: Boolean, watched: Boolean, comment: String, rating: Float, tipo: String) -> Unit
 ) : BottomSheetDialogFragment() {
+
 
     private lateinit var commentEditText: EditText
     private lateinit var ratingBar: RatingBar
@@ -26,6 +29,7 @@ class SerieActionsBottomSheet(
     private lateinit var ivVistas: ImageView
     private var isInWatchlist = false
     private var isWatched = false
+
 
     @SuppressLint("MissingInflatedId")
     override fun onCreateView(
@@ -50,8 +54,9 @@ class SerieActionsBottomSheet(
             updateWatchedUI()
         }
 
+
         val uid = FirebaseAuth.getInstance().currentUser?.uid
-        val serieIdStr = serieId.toString()
+        val movieIdStr = movieId.toString()
 
         if (uid != null) {
             val database = FirebaseDatabase.getInstance().reference.child("usuarios").child(uid)
@@ -60,7 +65,7 @@ class SerieActionsBottomSheet(
             database.child("watchlistPeliculas").get().addOnSuccessListener { snapshot ->
                 val lista =
                     snapshot.getValue(object : GenericTypeIndicator<List<String>>() {}) ?: listOf()
-                isInWatchlist = lista.contains(serieIdStr)
+                isInWatchlist = lista.contains(movieIdStr)
                 updateWatchlistUI()
             }
 
@@ -68,7 +73,7 @@ class SerieActionsBottomSheet(
             database.child("peliculasVistas").get().addOnSuccessListener { snapshot ->
                 val lista =
                     snapshot.getValue(object : GenericTypeIndicator<List<String>>() {}) ?: listOf()
-                isWatched = lista.contains(serieIdStr)
+                isWatched = lista.contains(movieIdStr)
                 updateWatchedUI()
             }
         }
@@ -78,53 +83,55 @@ class SerieActionsBottomSheet(
             val watched = isWatched
             val comment = commentEditText.text.toString()
             val rating = ratingBar.rating
+            val tipo = "pelicula"
 
             if (uid != null) {
                 val database = FirebaseDatabase.getInstance().reference.child("usuarios").child(uid)
 
                 // Actualizar watchlist
-                database.child("watchlistSeries").get().addOnSuccessListener { snapshot ->
+                database.child("watchlistPeliculas").get().addOnSuccessListener { snapshot ->
                     val listaActual =
                         snapshot.getValue(object : GenericTypeIndicator<List<String>>() {})
                             ?: listOf()
                     val nuevaLista = if (watchlist) {
-                        if (!listaActual.contains(serieIdStr)) listaActual + serieIdStr else listaActual
+                        if (!listaActual.contains(movieIdStr)) listaActual + movieIdStr else listaActual
                     } else {
-                        listaActual - serieIdStr
+                        listaActual - movieIdStr
                     }
-                    database.child("watchlistSeries").setValue(nuevaLista)
+                    database.child("watchlistPeliculas").setValue(nuevaLista)
                 }
 
                 // Actualizar películas vistas
-                database.child("seriesVistas").get().addOnSuccessListener { snapshot ->
+                database.child("peliculasVistas").get().addOnSuccessListener { snapshot ->
                     val listaActual =
                         snapshot.getValue(object : GenericTypeIndicator<List<String>>() {})
                             ?: listOf()
                     val nuevaLista = if (watched) {
-                        if (!listaActual.contains(serieIdStr)) listaActual + serieIdStr else listaActual
+                        if (!listaActual.contains(movieIdStr)) listaActual + movieIdStr else listaActual
                     } else {
-                        listaActual - serieIdStr
+                        listaActual - movieIdStr
                     }
-                    database.child("seriesVistas").setValue(nuevaLista)
+                    database.child("peliculasVistas").setValue(nuevaLista)
                 }
             }
 
             // Guardar publicación solo si existe comentario y rating
-            if(comment.isNotEmpty() && rating.toString().isNotEmpty()){
-                savePost(serieId, comment, rating.toDouble())
+            if (comment.isNotEmpty() && rating.toString().isNotEmpty()) {
+                savePost(movieId, comment, rating.toDouble())
+                Toast.makeText(requireContext(), "Publicación guardada", Toast.LENGTH_SHORT).show()
             }
 
 
-            onActionsConfirmed(watchlist, watched, comment, rating)
+            onActionsConfirmed(watchlist, watched, comment, rating, tipo)
             dismiss()
         }
 
         return view
     }
 
-    private fun savePost(peliculaId:Int, comentario:String, valoracion: Double) {
+    private fun savePost(peliculaId: Int, comentario: String, valoracion: Double) {
         val database = FirebaseDatabase.getInstance()
-        val postsRef = database.getReference("postsseries")
+        val postsRef = database.getReference("postspeliculas")
 
         val uid = FirebaseAuth.getInstance().currentUser?.uid ?: return
         val post = Post(
@@ -133,7 +140,7 @@ class SerieActionsBottomSheet(
             comentario = comentario,
             valoracion = valoracion,
             posterPath = posterPath,
-            tipo = "serie"
+            tipo = "pelicula"
         )
 
         val nuevoPostRef = postsRef.push()
@@ -147,16 +154,16 @@ class SerieActionsBottomSheet(
         val usuarioPostsRef = FirebaseDatabase.getInstance()
             .getReference("usuarios")
             .child(uid)
-            .child("postsseries")
+            .child("postspeliculas")
         usuarioPostsRef.child(nuevoPostRef.key!!).setValue(true)
 
         //Guardo una referencia del post para cada película
-        val seriesPostsRef = FirebaseDatabase.getInstance()
-            .getReference("series")
+        val peliculaPostsRef = FirebaseDatabase.getInstance()
+            .getReference("peliculas")
             .child(peliculaId.toString())
-            .child("postsseries")
+            .child("postspeliculas")
 
-        seriesPostsRef.child(nuevoPostRef.key!!).setValue(true)
+        peliculaPostsRef.child(nuevoPostRef.key!!).setValue(true)
 
 
     }
@@ -178,4 +185,5 @@ class SerieActionsBottomSheet(
 
         ivVistas.setColorFilter(color)
     }
+
 }

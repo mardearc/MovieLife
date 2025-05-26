@@ -1,4 +1,4 @@
-package com.example.movielife
+package com.example.movielife.model
 
 data class User(
     val uid: String = "",

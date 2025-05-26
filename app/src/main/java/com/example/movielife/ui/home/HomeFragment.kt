@@ -5,7 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import com.example.movielife.HomePagerAdapter
+import com.example.movielife.ui.adapters.HomePagerAdapter
 import com.example.movielife.databinding.FragmentHomeBinding
 import com.google.android.material.tabs.TabLayoutMediator
 

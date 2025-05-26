@@ -10,10 +10,9 @@ import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
-import com.example.movielife.ElegirUsernameActivity
-import com.example.movielife.LoginActivity
+import com.example.movielife.ui.login.LoginActivity
 import com.example.movielife.R
-import com.example.movielife.User
+import com.example.movielife.model.User
 import com.example.movielife.databinding.FragmentProfileBinding
 import com.google.android.material.tabs.TabLayoutMediator
 import com.google.firebase.auth.FirebaseAuth
@@ -114,18 +113,9 @@ class ProfileFragment : Fragment() {
                 mostrarDialogoCerrarSesion()
                 true
             }
-            R.id.action_editar_perfil ->{
-//                editarPerfil()
-                true
-            }
             else -> super.onOptionsItemSelected(item)
         }
     }
-
-//    private fun editarPerfil(){
-//        val intent = Intent(requireContext(), ElegirUsernameActivity::class.java)
-//        startActivity(intent)
-//    }
 
     private fun mostrarDialogoCerrarSesion() {
         val dialog = AlertDialog.Builder(requireContext()).create()

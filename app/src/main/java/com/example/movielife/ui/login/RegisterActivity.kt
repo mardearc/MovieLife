@@ -1,4 +1,4 @@
-package com.example.movielife
+package com.example.movielife.ui.login
 
 import android.annotation.SuppressLint
 import android.content.Intent
@@ -9,6 +9,7 @@ import android.widget.EditText
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import com.example.movielife.R
 import com.google.firebase.auth.FirebaseAuth
 
 class RegisterActivity : AppCompatActivity() {

@@ -1,4 +1,4 @@
-package com.example.movielife
+package com.example.movielife.ui.actor
 
 import android.content.Intent
 import android.os.Bundle
@@ -6,8 +6,14 @@ import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.GridLayoutManager
-import com.example.movielife.DetailPeliculaActivity.Companion.EXTRA_ID
+import com.example.movielife.R
+import com.example.movielife.ui.movies.DetailPeliculaActivity.Companion.EXTRA_ID
 import com.example.movielife.databinding.ActivityDetailActorBinding
+import com.example.movielife.model.ActorDetailsResponse
+import com.example.movielife.model.ApiService
+import com.example.movielife.model.PeliculaItemResponse
+import com.example.movielife.ui.adapters.PeliculaAdapter
+import com.example.movielife.ui.movies.DetailPeliculaActivity
 import com.squareup.picasso.Picasso
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers

@@ -1,4 +1,4 @@
-package com.example.movielife
+package com.example.movielife.ui.adapters
 
 import android.view.View
 import android.widget.ImageView

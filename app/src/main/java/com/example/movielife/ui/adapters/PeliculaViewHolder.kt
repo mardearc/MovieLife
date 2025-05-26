@@ -1,7 +1,8 @@
-package com.example.movielife
+package com.example.movielife.ui.adapters
 
 import android.view.View
 import androidx.recyclerview.widget.RecyclerView
+import com.example.movielife.model.PeliculaItemResponse
 import com.example.movielife.databinding.ItemPeliculaBinding
 import com.squareup.picasso.Picasso
 

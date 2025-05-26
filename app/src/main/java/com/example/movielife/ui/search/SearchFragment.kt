@@ -10,8 +10,8 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.widget.SearchView
 import com.example.movielife.R
-import com.example.movielife.SearchUserAdapter
-import com.example.movielife.User
+import com.example.movielife.ui.adapters.SearchUserAdapter
+import com.example.movielife.model.User
 import com.example.movielife.databinding.FragmentSearchBinding
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.firebase.database.DataSnapshot

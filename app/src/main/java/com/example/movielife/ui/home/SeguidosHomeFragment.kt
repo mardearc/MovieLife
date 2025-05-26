@@ -7,9 +7,9 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.example.movielife.PostAdapter
-import com.example.movielife.Post
-import com.example.movielife.User
+import com.example.movielife.ui.adapters.PostAdapter
+import com.example.movielife.model.Post
+import com.example.movielife.model.User
 import com.example.movielife.databinding.FragmentSeguidosHomeBinding
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError

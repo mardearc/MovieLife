@@ -1,10 +1,16 @@
-package com.example.movielife
+package com.example.movielife.ui.adapters
 
 import android.content.Intent
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import com.example.movielife.DetailPeliculaActivity.Companion.EXTRA_ID
+import com.example.movielife.ui.movies.DetailPeliculaActivity
+import com.example.movielife.ui.movies.DetailPeliculaActivity.Companion.EXTRA_ID
+import com.example.movielife.ui.series.DetailSerieActivity
+import com.example.movielife.ui.profile.OtherUserProfileActivity
+import com.example.movielife.model.Post
+import com.example.movielife.R
+import com.example.movielife.model.User
 import com.squareup.picasso.Picasso
 
 class PostAdapter(

@@ -1,11 +1,9 @@
-package com.example.movielife
+package com.example.movielife.ui.adapters
 
 import androidx.fragment.app.Fragment
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import com.example.movielife.ui.home.ParatiHomeFragment
 import com.example.movielife.ui.home.SeguidosHomeFragment
-import com.example.movielife.ui.profile.ProfileHistorialFragment
-import com.example.movielife.ui.profile.ProfilePostFragment
 
 class HomePagerAdapter(
     fragment: Fragment,

@@ -1,4 +1,4 @@
-package com.example.movielife
+package com.example.movielife.ui.movies
 
 import android.content.Intent
 import android.os.Bundle
@@ -9,75 +9,83 @@ import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.cardview.widget.CardView
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.example.movielife.DetailActorActivity.Companion.ACTOR_ID
-import com.example.movielife.databinding.ActivityDetailSerieBinding
+import com.example.movielife.model.ApiService
+import com.example.movielife.ui.actor.DetailActorActivity
+import com.example.movielife.ui.actor.DetailActorActivity.Companion.ACTOR_ID
+import com.example.movielife.model.PeliculaDetailResponse
+import com.example.movielife.model.Post
+import com.example.movielife.R
+import com.example.movielife.model.User
+import com.squareup.picasso.Picasso
+import kotlinx.coroutines.CoroutineScope
+import com.example.movielife.databinding.ActivityDetailPeliculaBinding
+import com.example.movielife.ui.adapters.ActorAdapter
+import com.example.movielife.ui.adapters.CrewAdapter
+import com.example.movielife.ui.adapters.PostAdapter
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
-import com.squareup.picasso.Picasso
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
-class DetailSerieActivity : AppCompatActivity() {
+class DetailPeliculaActivity : AppCompatActivity() {
 
     companion object {
         const val EXTRA_ID = "extra_id"
     }
 
-    private lateinit var binding: ActivityDetailSerieBinding
+    private lateinit var binding: ActivityDetailPeliculaBinding
 
-    private lateinit var adapter: ActorAdapter
-
-    private lateinit var posterPath : String
+    private lateinit var adapterActor: ActorAdapter
 
     private lateinit var adapterCrew: CrewAdapter
 
+    private lateinit var posterPath : String
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = ActivityDetailSerieBinding.inflate(layoutInflater)
+        binding = ActivityDetailPeliculaBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
         val id = intent.getIntExtra(EXTRA_ID, 0)
 
-        getSerieData(id)
+        getPeliculaData(id)
         getPosts(id)
-        adapter = ActorAdapter{navigateToActorDetail(it)}
-        binding.recyclerView.setHasFixedSize(true)
-        binding.recyclerView.layoutManager = LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
-        binding.recyclerView.adapter = adapter
+        adapterActor = ActorAdapter{navigateToActorDetail(it)}
+        binding.recyclerViewActor.setHasFixedSize(true)
+        binding.recyclerViewActor.layoutManager = LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
+        binding.recyclerViewActor.adapter = adapterActor
 
         adapterCrew = CrewAdapter{navigateToCrewDetail(it)}
         binding.recyclerViewCrew.setHasFixedSize(true)
         binding.recyclerViewCrew.layoutManager = LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
         binding.recyclerViewCrew.adapter = adapterCrew
 
-
         binding.recyclerViewPost.setHasFixedSize(true)
         binding.recyclerViewPost.layoutManager = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
 
-
         binding.fab.setOnClickListener {
-            val bottomSheet = SerieActionsBottomSheet(serieId = id, posterPath = posterPath) { watchlist, watched, comment, rating ->
+            val bottomSheet = MovieActionsBottomSheet(movieId = id, posterPath = posterPath) { watchlist, watched, comment, rating, tipo ->
 
-                Log.d("SerieActions", "Watchlist: $watchlist, Watched: $watched, Comment: $comment, Rating: $rating")
+                Log.d("MovieActions", "Watchlist: $watchlist, Watched: $watched, Comment: $comment, Rating: $rating, Tipo: $tipo")
             }
-            bottomSheet.show(supportFragmentManager, "SerieActionsBottomSheet")
+            bottomSheet.show(supportFragmentManager, "MovieActionsBottomSheet")
         }
 
         binding.backButton.setOnClickListener{
             finish()
         }
+
     }
 
     private fun getPosts(id: Int) {
         val database = FirebaseDatabase.getInstance()
-        val seriesPostRef = database.getReference("series").child(id.toString()).child("postsseries")
+        val peliculaPostRef = database.getReference("peliculas").child(id.toString()).child("postspeliculas")
 
-        seriesPostRef.addListenerForSingleValueEvent(object : ValueEventListener {
+        peliculaPostRef.addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 val postIds = mutableListOf<String>()
                 for (child in snapshot.children) {
@@ -89,19 +97,18 @@ class DetailSerieActivity : AppCompatActivity() {
                 }
 
                 if (postIds.isEmpty()) {
-                    Log.d("PostLog", "No se encontraron posts para la serie con ID $id")
+                    Log.d("PostLog", "No se encontraron posts para la película con ID $id")
                     binding.recyclerViewPost.adapter = PostAdapter(emptyList(), emptyMap())
                     return
                 }
 
-                val postsRef = database.getReference("postsseries")
+                val postsRef = database.getReference("postspeliculas")
                 val postList = mutableListOf<Post>()
                 val uidSet = mutableSetOf<String>()
                 var fetchedPosts = 0
 
                 for (postId in postIds) {
-                    postsRef.child(postId).addListenerForSingleValueEvent(object :
-                        ValueEventListener {
+                    postsRef.child(postId).addListenerForSingleValueEvent(object : ValueEventListener {
                         override fun onDataChange(postSnapshot: DataSnapshot) {
                             val post = postSnapshot.getValue(Post::class.java)
                             if (post != null) {
@@ -170,29 +177,28 @@ class DetailSerieActivity : AppCompatActivity() {
         }
     }
 
-
-    private fun getSerieData(id: Int) {
+    private fun getPeliculaData(id: Int) {
         val apiKey = "cef2d5efc3c68480cb48f48b33b29de4"
 
         //Obtener los datos a través del id
         CoroutineScope(Dispatchers.IO).launch {
-            val serieDetail =
-                getRetrofit().create(ApiService::class.java).getSerieById(id, apiKey)
-            if (serieDetail.body() != null) {
+            val peliculaDetail =
+                getRetrofit().create(ApiService::class.java).getMovieById(id, apiKey)
+            if (peliculaDetail.body() != null) {
                 runOnUiThread {
                     createUI(
-                        serieDetail.body()!!
+                        peliculaDetail.body()!!
                     )
 
                 }
             } else {
-                Log.i("SerieDetails", "Error: ${serieDetail.code()}")
+                Log.i("MovieDetails", "Error: ${peliculaDetail.code()}")
             }
 
 
-            // Obtener los logos de la plataforma de cada serie
+            // Obtener los logos de la plataforma de cada película
             val peliculaPlatform =
-                getRetrofit().create(ApiService::class.java).getPlataformasSeries(id, apiKey)
+                getRetrofit().create(ApiService::class.java).getPlataformas(id, apiKey)
 
             val logos = binding.plataformaLogosLayout
 
@@ -214,11 +220,11 @@ class DetailSerieActivity : AppCompatActivity() {
                     plataformas?.flatrate?.forEach { plat ->
 
                         // Creo CardView con cada logo
-                        val cardView = CardView(this@DetailSerieActivity)
+                        val cardView = CardView(this@DetailPeliculaActivity)
                         cardView.layoutParams = params
                         cardView.radius = 8f
 
-                        val imageView = ImageView(this@DetailSerieActivity)
+                        val imageView = ImageView(this@DetailPeliculaActivity)
 
                         val logoUrl = "https://image.tmdb.org/t/p/w200${plat.logo_path}"
                         Picasso.get().load(logoUrl).into(imageView)
@@ -241,13 +247,13 @@ class DetailSerieActivity : AppCompatActivity() {
 
             // Reparto
             val actorDetail =
-                getRetrofit().create(ApiService::class.java).getSerieCredits(id, apiKey)
+                getRetrofit().create(ApiService::class.java).getMovieCredits(id, apiKey)
 
             if (actorDetail.isSuccessful) {
                 val actores = actorDetail.body()
                 if (actores != null) {
                     runOnUiThread {
-                        adapter.updateList(actores.cast)
+                        adapterActor.updateList(actores.cast)
                     }
 
                 }
@@ -255,7 +261,7 @@ class DetailSerieActivity : AppCompatActivity() {
 
             // Crew
             val crewDetail =
-                getRetrofit().create(ApiService::class.java).getSerieCreditsCrew(id, apiKey)
+                getRetrofit().create(ApiService::class.java).getCrew(id, apiKey)
 
             if (crewDetail.isSuccessful) {
                 val crew = crewDetail.body()
@@ -266,26 +272,29 @@ class DetailSerieActivity : AppCompatActivity() {
 
                 }
             }
+
         }
     }
 
+
+
     private fun sinPlataforma() {
-        val noPlataformasTextView = TextView(this@DetailSerieActivity)
+        val noPlataformasTextView = TextView(this@DetailPeliculaActivity)
         noPlataformasTextView.text = getString(R.string.no_hay_plataformas)
         noPlataformasTextView.textSize = 16f
         binding.plataformaLogosLayout.addView(noPlataformasTextView)
     }
 
 
-    private fun createUI(body: SerieDetailResponse) {
+    private fun createUI(body: PeliculaDetailResponse) {
 
         posterPath = "https://image.tmdb.org/t/p/original/" + body.url
         //Imagen poster de fondo
         Picasso.get().load("https://image.tmdb.org/t/p/original/" + body.url)
-            .into(binding.ivDetalleFondo);
+            .into(binding.ivDetalleFondo)
         //Imagen poster
         Picasso.get().load("https://image.tmdb.org/t/p/original/" + body.url)
-            .into(binding.ivDetalle);
+            .into(binding.ivDetalle)
 
         //Imagen fondo de la informacion / Imagen secundaria
         Picasso.get().load("https://image.tmdb.org/t/p/original/" + body.posterFondo)
@@ -296,12 +305,7 @@ class DetailSerieActivity : AppCompatActivity() {
             append(body.fecha.substring(0, 4))  //Formatear año de la fecha
             append(" • ")
             append(body.tiempo)
-            if(body.tiempo == 1){
-                append(" temporada")
-            }else{
-                append(" temporadas")
-            }
-            append(" • ")
+            append("min • ")
             append(body.genero.joinToString(", ") { it.name }) //Seleccionar todos los géneros
         }
         binding.tvTitulo.text = body.titulo

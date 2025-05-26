@@ -12,10 +12,9 @@ import android.view.ViewGroup
 import androidx.appcompat.widget.SearchView
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.GridLayoutManager
-import com.example.movielife.DetailPeliculaActivity
-import com.example.movielife.DetailPeliculaActivity.Companion.EXTRA_ID
-import com.example.movielife.ApiService
-import com.example.movielife.PeliculaAdapter
+import com.example.movielife.ui.movies.DetailPeliculaActivity.Companion.EXTRA_ID
+import com.example.movielife.model.ApiService
+import com.example.movielife.ui.adapters.PeliculaAdapter
 import com.example.movielife.R
 import com.example.movielife.databinding.FragmentMoviesBinding
 import kotlinx.coroutines.CoroutineScope

@@ -1,8 +1,10 @@
-package com.example.movielife
+package com.example.movielife.ui.adapters
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import com.example.movielife.model.CrewItemResponse
+import com.example.movielife.R
 
 
 class CrewAdapter(

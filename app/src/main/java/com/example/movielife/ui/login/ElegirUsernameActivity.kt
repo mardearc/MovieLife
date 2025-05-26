@@ -1,4 +1,4 @@
-package com.example.movielife
+package com.example.movielife.ui.login
 
 import android.annotation.SuppressLint
 import android.content.Intent
@@ -7,7 +7,9 @@ import android.text.Editable
 import android.text.TextWatcher
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
+import com.example.movielife.MainActivity
 import com.example.movielife.databinding.ActivityElegirUsernameBinding
+import com.example.movielife.model.User
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.FirebaseDatabase
 

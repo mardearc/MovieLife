@@ -6,7 +6,6 @@
     android:layout_height="match_parent"
     xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <!-- Encabezado -->
     <LinearLayout
         android:orientation="horizontal"
         android:padding="16dp"
@@ -113,7 +112,6 @@
             tools:visibility="visible" />
     </LinearLayout>
 
-    <!-- Botones de selección -->
     <LinearLayout
         android:orientation="horizontal"
         android:gravity="center"

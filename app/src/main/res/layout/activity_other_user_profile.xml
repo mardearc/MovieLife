@@ -14,7 +14,6 @@
         app:srcCompat="?attr/actionModeCloseDrawable"
         tools:ignore="SpeakableTextPresentCheck" />
 
-    <!-- Encabezado -->
     <LinearLayout
         android:orientation="horizontal"
         android:padding="16dp"
@@ -120,7 +119,7 @@
             tools:visibility="visible" />
     </LinearLayout>
 
-    <!-- Botones de selección -->
+
     <LinearLayout
         android:orientation="horizontal"
         android:gravity="center"
@@ -128,7 +127,7 @@
         android:layout_height="wrap_content">
     </LinearLayout>
 
-    <!-- RecyclerView para los comentarios o historial -->
+
     <com.google.android.material.tabs.TabLayout
         android:id="@+id/tabLayout"
         android:layout_width="match_parent"

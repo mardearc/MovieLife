@@ -73,7 +73,7 @@ class SeguidosHomeFragment : Fragment() {
                     return
                 }
 
-                cargarPostsDeUsuariosSeguidos(followedUids)
+                cargarPostsGlobales(followedUids)
             }
 
             override fun onCancelled(error: DatabaseError) {
@@ -82,28 +82,68 @@ class SeguidosHomeFragment : Fragment() {
         })
     }
 
-    private fun cargarPostsDeUsuariosSeguidos(followedUids: Set<String>) {
-        val postsRef = FirebaseDatabase.getInstance().getReference("postspeliculas")
+    private fun cargarPostsGlobales(followedUids: Set<String>) {
+        val database = FirebaseDatabase.getInstance()
+        val postsPeliculasRef = database.getReference("postspeliculas")
+        val postsSeriesRef = database.getReference("postsseries")
 
-        postsRef.addListenerForSingleValueEvent(object : ValueEventListener {
+        val posts = mutableListOf<Post>()
+        val uidSet = mutableSetOf<String>()
+
+        val postsCargados = mutableListOf<Boolean>()
+
+        fun verificarCargaCompleta() {
+            if (postsCargados.size >= 1) {
+                if (posts.isEmpty()) {
+                    Log.d("ParatiPostLog", "No se encontraron posts")
+                    binding.recyclerViewPosts.adapter = PostAdapter(emptyList(), emptyMap())
+                    return
+                }
+
+                val postListOrdenado = posts.sortedByDescending { it.timestamp }
+                fetchUsersAndSetAdapter(postListOrdenado, uidSet)
+            }
+        }
+
+        // Cargar posts de películas
+        postsPeliculasRef.addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
-                val filteredPosts = mutableListOf<Post>()
-                val uidsInPosts = mutableSetOf<String>()
-
                 for (child in snapshot.children) {
                     val post = child.getValue(Post::class.java)
                     if (post != null && followedUids.contains(post.uid)) {
-                        filteredPosts.add(post)
-                        uidsInPosts.add(post.uid)
+                        posts.add(post)
+                        uidSet.add(post.uid)
                     }
                 }
-
-                val sortedPosts = filteredPosts.sortedByDescending { it.timestamp }
-                fetchUsersAndSetAdapter(sortedPosts, uidsInPosts)
+                postsCargados.add(true)
+                verificarCargaCompleta()
             }
 
             override fun onCancelled(error: DatabaseError) {
-                Log.e("SeguidosLog", "Error cargando posts: ${error.message}")
+                Log.e("ParatiPostLog", "Error cargando posts de películas: ${error.message}")
+                postsCargados.add(true)
+                verificarCargaCompleta()
+            }
+        })
+
+        // Cargar posts de series
+        postsSeriesRef.addListenerForSingleValueEvent(object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                for (child in snapshot.children) {
+                    val post = child.getValue(Post::class.java)
+                    if (post != null  && followedUids.contains(post.uid)) {
+                        posts.add(post)
+                        uidSet.add(post.uid)
+                    }
+                }
+                postsCargados.add(true)
+                verificarCargaCompleta()
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+                Log.e("ParatiPostLog", "Error cargando posts de series: ${error.message}")
+                postsCargados.add(true)
+                verificarCargaCompleta()
             }
         })
     }

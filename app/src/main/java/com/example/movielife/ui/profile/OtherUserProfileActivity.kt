@@ -7,6 +7,7 @@ import androidx.core.content.ContextCompat
 import com.example.movielife.R
 import com.example.movielife.databinding.ActivityOtherUserProfileBinding
 import com.example.movielife.model.User
+import com.example.movielife.ui.adapters.ProfilePagerAdapterActivity
 import com.google.android.material.tabs.TabLayoutMediator
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DataSnapshot

@@ -47,7 +47,7 @@ class LoginActivity : AppCompatActivity() {
 
                                     ref.get().addOnSuccessListener { snapshot ->
                                         if (!snapshot.exists()) {
-                                            // Usuario completamente nuevo: creamos su nodo con email, etc.
+                                            // Usuario nuevo
                                             val nuevoUsuario = mapOf(
                                                 "email" to user.email,
                                                 "fotoPerfil" to user.photoUrl?.toString(),

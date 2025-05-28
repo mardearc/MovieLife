@@ -32,19 +32,19 @@ data class Genre(
     )
 
 data class PeliculaPlataformas(
-    @SerializedName("id") val id: Int,  // ID de la película
-    @SerializedName("results") val results: Map<String, Country>   // Proveedores por país (clave: código del país)
+    @SerializedName("id") val id: Int,
+    @SerializedName("results") val results: Map<String, Country>
 )
 
 data class Country(
-    @SerializedName("flatrate") val flatrate: List<Provider>?,      // Servicios de streaming incluidos
-    @SerializedName("buy") val buy: List<Provider>?,           // Servicios para comprar
-    @SerializedName("rent") val rent: List<Provider>?           // Servicios para alquilar
+    @SerializedName("flatrate") val flatrate: List<Provider>?,
+    @SerializedName("buy") val buy: List<Provider>?,
+    @SerializedName("rent") val rent: List<Provider>?
 )
 
 data class Provider(
     @SerializedName("provider_id") val provider_id:Int,
-    @SerializedName("logo_path") val logo_path: String,              // Ruta del logo
+    @SerializedName("logo_path") val logo_path: String,
 )
 
 

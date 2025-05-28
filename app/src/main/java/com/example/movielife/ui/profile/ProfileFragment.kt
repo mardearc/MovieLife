@@ -14,6 +14,7 @@ import com.example.movielife.ui.login.LoginActivity
 import com.example.movielife.R
 import com.example.movielife.model.User
 import com.example.movielife.databinding.FragmentProfileBinding
+import com.example.movielife.ui.adapters.ProfilePagerAdapter
 import com.google.android.material.tabs.TabLayoutMediator
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DataSnapshot

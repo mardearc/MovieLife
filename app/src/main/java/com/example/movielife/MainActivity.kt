@@ -83,7 +83,7 @@ class MainActivity : AppCompatActivity() {
 
                 val navigationView = findViewById<NavigationView>(R.id.nav_view)
 
-                val headerView = navigationView.getHeaderView(0) // Accede al encabezado
+                val headerView = navigationView.getHeaderView(0)
 
                 val nombreUsuario = headerView.findViewById<TextView>(R.id.textViewUsuarioLateral)
                 val fotoPerfil = headerView.findViewById<ImageView>(R.id.imageViewMenuLateral)
@@ -96,7 +96,6 @@ class MainActivity : AppCompatActivity() {
                 fotoPerfil.setImageResource(resId)
 
             } else {
-                // Maneja el error
                 Log.e("Firebase", "Error al obtener los datos", task.exception)
             }
         }

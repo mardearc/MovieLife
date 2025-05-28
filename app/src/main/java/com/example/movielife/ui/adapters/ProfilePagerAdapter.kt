@@ -1,7 +1,9 @@
-package com.example.movielife.ui.profile
+package com.example.movielife.ui.adapters
 
 import androidx.fragment.app.Fragment
 import androidx.viewpager2.adapter.FragmentStateAdapter
+import com.example.movielife.ui.profile.ProfileHistorialFragment
+import com.example.movielife.ui.profile.ProfilePostFragment
 
 class ProfilePagerAdapter(
     fragment: Fragment,

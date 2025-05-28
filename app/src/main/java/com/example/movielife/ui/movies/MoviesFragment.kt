@@ -55,7 +55,6 @@ class MoviesFragment : Fragment() {
 
         searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {
-                // Realizar la búsqueda
                 query?.let { searchByName(it) }
                 return true
             }
@@ -137,7 +136,7 @@ class MoviesFragment : Fragment() {
 
                 if (myResponse.isSuccessful) {
                     val peliculas =
-                        myResponse.body() // Aquí tienes acceso a los datos de la respuesta
+                        myResponse.body()
                     if (peliculas != null) {
                         Log.i("mardearc", peliculas.toString())
                         requireActivity().runOnUiThread {

@@ -209,7 +209,6 @@ class DetailSerieActivity : AppCompatActivity() {
                 runOnUiThread {
                     val plataformas = peliculaPlatform.body()?.results?.get("ES")
 
-                    // Configurar la separación entre los logos en el LinearLayout
                     val params = LinearLayout.LayoutParams(
                         LinearLayout.LayoutParams.WRAP_CONTENT,
                         LinearLayout.LayoutParams.WRAP_CONTENT

@@ -136,7 +136,7 @@ class SeriesFragment : Fragment() {
 
                 if (myResponse.isSuccessful) {
                     val peliculas =
-                        myResponse.body() // Aquí tienes acceso a los datos de la respuesta
+                        myResponse.body()
                     if (peliculas != null) {
                         Log.i("mardearc", peliculas.toString())
                         requireActivity().runOnUiThread {

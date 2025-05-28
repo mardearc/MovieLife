@@ -50,7 +50,7 @@ class ParatiHomeFragment : Fragment() {
         val postsPeliculasRef = database.getReference("postspeliculas")
         val postsSeriesRef = database.getReference("postsseries")
 
-        val todosLosPosts = mutableListOf<Post>() // Reutilizamos PostPelicula para ambos
+        val todosLosPosts = mutableListOf<Post>()
         val uidSet = mutableSetOf<String>()
 
         val postsCargados = mutableListOf<Boolean>()

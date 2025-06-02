@@ -138,16 +138,22 @@
                         android:layout_marginEnd="5dp"
                         android:background="@color/gris" />
 
-                    <TextView
-                        android:id="@+id/tvPeliculas"
+                    <com.google.android.material.tabs.TabLayout
+                        android:id="@+id/tabLayout"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginStart="8dp"
-                        android:layout_marginTop="8dp"
-                        android:text="@string/peliculas"
-                        android:textColor="@color/black"
-                        android:textSize="18sp"
-                        android:textStyle="bold" />
+                        android:contentDescription="@string/series"
+                        app:tabIndicatorColor="@color/green_principal"
+                        app:tabIndicatorHeight="3dp"
+                        app:tabSelectedTextColor="@color/green_principal"
+                        app:tabTextColor="@color/green_principal_grey"
+                        android:backgroundTint="@color/green_secondary"/>
+
+                    <androidx.viewpager2.widget.ViewPager2
+                        android:id="@+id/viewPager"
+                        android:layout_width="match_parent"
+                        android:layout_height="0dp"
+                        android:layout_weight="1"/>
 
                     <ProgressBar
                         android:id="@+id/pbBuscador"
@@ -156,11 +162,7 @@
                         android:layout_gravity="center"
                         android:visibility="gone" />
 
-                    <androidx.recyclerview.widget.RecyclerView
-                        android:id="@+id/recyclerView"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="vertical" />
+
                 </LinearLayout>
 
             </FrameLayout>

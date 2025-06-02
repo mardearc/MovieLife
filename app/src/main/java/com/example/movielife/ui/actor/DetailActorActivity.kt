@@ -4,16 +4,21 @@ import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.GridLayoutManager
+import androidx.viewpager.widget.PagerAdapter
 import com.example.movielife.R
 import com.example.movielife.ui.movies.DetailPeliculaActivity.Companion.EXTRA_ID
 import com.example.movielife.databinding.ActivityDetailActorBinding
 import com.example.movielife.model.ActorDetailsResponse
 import com.example.movielife.model.ApiService
 import com.example.movielife.model.PeliculaItemResponse
+import com.example.movielife.model.SerieItemResponse
 import com.example.movielife.ui.adapters.PeliculaAdapter
+import com.example.movielife.ui.adapters.PeliculaSerieViewPagerAdapter
 import com.example.movielife.ui.movies.DetailPeliculaActivity
+import com.google.android.material.tabs.TabLayoutMediator
 import com.squareup.picasso.Picasso
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -43,15 +48,6 @@ class DetailActorActivity : AppCompatActivity() {
         val role = intent.getStringExtra(EXTRA_ROLE)
 
         getActorData(id)
-        adapter = PeliculaAdapter { navigateToDetail(it) }
-        binding.recyclerView.setHasFixedSize(true)
-        binding.recyclerView.layoutManager = GridLayoutManager(this, 2)
-        binding.recyclerView.adapter = adapter
-        if (role == "actor") {
-            getPeliculas(id)
-        } else if (role == "crew") {
-            getPeliculasCrew(id)
-        }
 
         // Hacer expansible la bio
         binding.tvBiografia.setOnClickListener {
@@ -66,6 +62,14 @@ class DetailActorActivity : AppCompatActivity() {
         binding.backButton.setOnClickListener {
             finish()
         }
+
+        binding.viewPager.adapter = role?.let { PeliculaSerieViewPagerAdapter(this, id, it) }
+
+        TabLayoutMediator(binding.tabLayout, binding.viewPager) { tab, position ->
+            tab.text = if (position == 0) "Películas" else "Series"
+        }.attach()
+
+
     }
 
     // Obtengo la informacion del actor a traves del id que recibo del intent
@@ -101,8 +105,6 @@ class DetailActorActivity : AppCompatActivity() {
             binding.tvBiografia.text = getString(R.string.no_existe_informacion)
             binding.tvBiografia.setTypeface(null, android.graphics.Typeface.NORMAL)
         }
-
-
     }
 
     private fun getRetrofit(): Retrofit {
@@ -111,86 +113,6 @@ class DetailActorActivity : AppCompatActivity() {
             .baseUrl("https://api.themoviedb.org/3/")
             .addConverterFactory(GsonConverterFactory.create())
             .build()
-
-    }
-
-    private fun getPeliculasCrew(id: Int) {
-        val apiKey = "cef2d5efc3c68480cb48f48b33b29de4"
-
-        binding.pbBuscador.isVisible = true
-        CoroutineScope(Dispatchers.IO).launch {
-            try {
-                val peliculaDetail = getRetrofit()
-                    .create(ApiService::class.java)
-                    .getMovieCrew(id, apiKey)
-                Log.e("MovieDetails", "Lanzando request")
-                if (peliculaDetail.crew.isNotEmpty()) {
-                    val crewList = peliculaDetail.crew
-                        .sortedByDescending { it.puntuacion }
-                    Log.e("MovieDetails", "Buscando.")
-                    val peliculas = crewList
-                        .distinctBy { it.id }.map { movie ->
-                            PeliculaItemResponse(
-                                peliculaId = movie.id,
-                                peliculaTitulo = movie.titulo,
-                                url = movie.url.let { "https://image.tmdb.org/t/p/w500$it" }
-                            )
-                        }
-
-                    runOnUiThread {
-                        adapter.updateList(peliculas)
-                        binding.pbBuscador.isVisible = false
-                    }
-                } else {
-                    Log.e("MovieDetails", "El crew está vacío.")
-                }
-            } catch (e: Exception) {
-                Log.e("MovieDetails", "Error en películas de crew: ${e.message}")
-            }
-        }
-    }
-
-
-    private fun getPeliculas(id: Int) {
-        val apiKey = "cef2d5efc3c68480cb48f48b33b29de4"
-
-        binding.pbBuscador.isVisible = true
-        CoroutineScope(Dispatchers.IO).launch {
-            try {
-                val peliculaDetail = getRetrofit()
-                    .create(ApiService::class.java)
-                    .getActorMovies(id, apiKey)
-
-                if (peliculaDetail.cast.isNotEmpty()) {
-                    val castList =
-                        peliculaDetail.cast.sortedByDescending { it.puntuacion }  // Ordenar películas por puntuación
-
-                    val peliculas = castList.map { movie ->
-                        PeliculaItemResponse(
-                            peliculaId = movie.id,
-                            peliculaTitulo = movie.titulo,
-                            url = movie.url.let { "https://image.tmdb.org/t/p/w500$it" }
-                        )
-                    }
-
-                    runOnUiThread {
-                        adapter.updateList(peliculas)
-                        binding.pbBuscador.isVisible = false
-                    }
-                } else {
-                    Log.e("MovieDetails", "El cast está vacío o nulo.")
-                }
-            } catch (e: Exception) {
-                Log.e("MovieDetails", "Error en la obtención de películas: ${e.message}")
-            }
-        }
-    }
-
-
-    private fun navigateToDetail(id: Int) {
-        val intent = Intent(this, DetailPeliculaActivity::class.java)
-        intent.putExtra(EXTRA_ID, id)
-        startActivity(intent)
     }
 }
 

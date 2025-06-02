@@ -54,11 +54,13 @@ class DetailSerieActivity : AppCompatActivity() {
 
         getSerieData(id)
         getPosts(id)
+        // Adapter de actores
         adapter = ActorAdapter{navigateToActorDetail(it)}
         binding.recyclerView.setHasFixedSize(true)
         binding.recyclerView.layoutManager = LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
         binding.recyclerView.adapter = adapter
 
+        // Adapter de crew
         adapterCrew = CrewAdapter{navigateToCrewDetail(it)}
         binding.recyclerViewCrew.setHasFixedSize(true)
         binding.recyclerViewCrew.layoutManager = LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
@@ -68,7 +70,7 @@ class DetailSerieActivity : AppCompatActivity() {
         binding.recyclerViewPost.setHasFixedSize(true)
         binding.recyclerViewPost.layoutManager = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
 
-
+        // Fab para post
         binding.fab.setOnClickListener {
             val bottomSheet = SerieActionsBottomSheet(serieId = id, posterPath = posterPath) { watchlist, watched, comment, rating ->
 
@@ -82,6 +84,7 @@ class DetailSerieActivity : AppCompatActivity() {
         }
     }
 
+    // Obtener post de una pelicula a través de su id
     private fun getPosts(id: Int) {
         val database = FirebaseDatabase.getInstance()
         val seriesPostRef = database.getReference("series").child(id.toString()).child("postsseries")
@@ -97,6 +100,7 @@ class DetailSerieActivity : AppCompatActivity() {
                     }
                 }
 
+                // Si no se encuentran post settear el adapter vacío
                 if (postIds.isEmpty()) {
                     Log.d("PostLog", "No se encontraron posts para la serie con ID $id")
                     binding.recyclerViewPost.adapter = PostAdapter(emptyList(), emptyMap())
@@ -108,6 +112,7 @@ class DetailSerieActivity : AppCompatActivity() {
                 val uidSet = mutableSetOf<String>()
                 var fetchedPosts = 0
 
+                // Recuperar información de cada post
                 for (postId in postIds) {
                     postsRef.child(postId).addListenerForSingleValueEvent(object :
                         ValueEventListener {
@@ -124,6 +129,7 @@ class DetailSerieActivity : AppCompatActivity() {
                             fetchedPosts++
                             if (fetchedPosts == postIds.size) {
                                 Log.d("PostLog", "Total de posts recuperados: ${postList.size}")
+                                // Recuperar la informacion
                                 fetchUsersAndSetAdapter(postList, uidSet)
                             }
                         }
@@ -141,6 +147,7 @@ class DetailSerieActivity : AppCompatActivity() {
         })
     }
 
+    // Recuperar informacion
     private fun fetchUsersAndSetAdapter(postList: List<Post>, uidSet: Set<String>) {
         val database = FirebaseDatabase.getInstance()
         val usuariosRef = database.getReference("usuarios")
@@ -179,7 +186,7 @@ class DetailSerieActivity : AppCompatActivity() {
         }
     }
 
-
+    // Obtener informacion de series por su id
     private fun getSerieData(id: Int) {
         val apiKey = "cef2d5efc3c68480cb48f48b33b29de4"
 
@@ -277,6 +284,7 @@ class DetailSerieActivity : AppCompatActivity() {
         }
     }
 
+    // Mensaje por si no hay plataformas
     private fun sinPlataforma() {
         val noPlataformasTextView = TextView(this@DetailSerieActivity)
         noPlataformasTextView.text = getString(R.string.no_hay_plataformas)
@@ -326,6 +334,7 @@ class DetailSerieActivity : AppCompatActivity() {
 
     }
 
+    // Navegar a DetailActorActivity si es actor
     private fun navigateToActorDetail(id: Int) {
         val intent = Intent(this, DetailActorActivity::class.java)
         intent.putExtra(ACTOR_ID, id)
@@ -333,6 +342,7 @@ class DetailSerieActivity : AppCompatActivity() {
         startActivity(intent)
     }
 
+    // Navegar a DetailActorActivity si es crew
     private fun navigateToCrewDetail(id: Int) {
         val intent = Intent(this, DetailActorActivity::class.java)
         intent.putExtra(ACTOR_ID, id)

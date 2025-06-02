@@ -54,14 +54,14 @@ class MoviesFragment : Fragment() {
 
         searchView.queryHint = "Buscar película..."
 
-        // Buscar mientras se escribe
+        // Buscar cuando se pulsa
         searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {
                 query?.let { searchByName(it) }
                 return true
             }
 
-            // Buscar cuando se pulsa
+            // Buscar mientras se escribe
             override fun onQueryTextChange(query: String?): Boolean {
                 query?.let {
                     if (it.isNotBlank()) {

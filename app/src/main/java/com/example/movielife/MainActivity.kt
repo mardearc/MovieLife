@@ -38,6 +38,7 @@ class MainActivity : AppCompatActivity() {
         val navView: NavigationView = binding.navView
         val navController = findNavController(R.id.nav_host_fragment_content_main)
 
+        // Flujo de fragments
         appBarConfiguration = AppBarConfiguration(
             setOf(
                 R.id.nav_home, R.id.nav_movies, R.id.nav_series, R.id.nav_watchlist, R.id.nav_search, R.id.nav_profile
@@ -55,6 +56,7 @@ class MainActivity : AppCompatActivity() {
 
         val userRef = databaseRef.child(userId!!)
 
+        // Pasar id al ir a Mi Perfil
         navView.setNavigationItemSelectedListener { menuItem ->
             when (menuItem.itemId) {
                 R.id.nav_profile -> {
@@ -74,7 +76,7 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
-
+        // Cargara imagen y nombre de ese usuario
         userRef.get().addOnCompleteListener { task ->
             if (task.isSuccessful) {
                 val dataSnapshot = task.result

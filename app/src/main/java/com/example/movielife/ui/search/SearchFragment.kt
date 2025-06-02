@@ -50,6 +50,7 @@ class SearchFragment : Fragment() {
     }
 
 
+    // Cargar lista con todos los usuarios
     private fun obtenerUsuarios() {
         val dbRef = FirebaseDatabase.getInstance().getReference("usuarios")
 
@@ -79,6 +80,7 @@ class SearchFragment : Fragment() {
     }
 
 
+    // Cargar el menu con buscador
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         inflater.inflate(R.menu.menu_busqueda, menu)
 
@@ -91,6 +93,7 @@ class SearchFragment : Fragment() {
                 return false
             }
 
+            // Buscar al escribir
             override fun onQueryTextChange(newText: String?): Boolean {
                 val texto = newText?.trim().orEmpty()
                 val filtrados = listaUsuarios.filter {

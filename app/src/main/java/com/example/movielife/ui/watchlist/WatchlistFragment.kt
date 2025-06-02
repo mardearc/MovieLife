@@ -49,11 +49,13 @@ class WatchlistFragment : Fragment() {
     }
 
     private fun initUI() {
+        // Adapter de películas
         peliculaAdapter = PeliculaAdapter { navigateToDetail(it) }
         binding.recyclerViewHistorialPeliculas.setHasFixedSize(true)
         binding.recyclerViewHistorialPeliculas.layoutManager = GridLayoutManager(requireContext(), 4)
         binding.recyclerViewHistorialPeliculas.adapter = peliculaAdapter
 
+        // Adapter de series
         serieAdapter = SerieAdapter { navigateToDetailSerie(it) }
         binding.recyclerViewHistorialSeries.setHasFixedSize(true)
         binding.recyclerViewHistorialSeries.layoutManager = GridLayoutManager(requireContext(), 4)
@@ -62,6 +64,7 @@ class WatchlistFragment : Fragment() {
         searchWatchlistSeries()
     }
 
+    // Buscar watchlist de películas de un usuario
     private fun searchWatchlist() {
         val uid = FirebaseAuth.getInstance().currentUser?.uid ?: return
         val database = FirebaseDatabase.getInstance().reference.child("usuarios").child(uid)
@@ -80,6 +83,7 @@ class WatchlistFragment : Fragment() {
         }
     }
 
+    // Buscar watchlist de películas de un usuario
     private fun searchWatchlistSeries() {
         val uid = FirebaseAuth.getInstance().currentUser?.uid ?: return
         val database = FirebaseDatabase.getInstance().reference.child("usuarios").child(uid)
@@ -98,6 +102,7 @@ class WatchlistFragment : Fragment() {
         }
     }
 
+    // Obtener información de películas y viajar a la activity
     private fun getPeliculaData(ids: List<String>) {
         val apiService = retrofit.create(ApiService::class.java)
         val apiKey = "cef2d5efc3c68480cb48f48b33b29de4"
@@ -126,6 +131,7 @@ class WatchlistFragment : Fragment() {
         }
     }
 
+    // Obtener información de series y viajar a la activity
     private fun getSerieData(ids: List<String>) {
         val apiService = retrofit.create(ApiService::class.java)
         val apiKey = "cef2d5efc3c68480cb48f48b33b29de4"
@@ -163,12 +169,14 @@ class WatchlistFragment : Fragment() {
 
     }
 
+    // Navegar a DetailPeliculaActivity
     private fun navigateToDetail(id: Int) {
         val intent = Intent(requireContext(), DetailPeliculaActivity::class.java)
         intent.putExtra(EXTRA_ID, id)
         startActivity(intent)
     }
 
+    // Navegar a DetailSerieActivity
     private fun navigateToDetailSerie(id: Int) {
         val intent = Intent(requireContext(), DetailSerieActivity::class.java)
         intent.putExtra(EXTRA_ID, id)

@@ -45,6 +45,7 @@ class SeriesFragment : Fragment() {
 
     }
 
+    // Crear menu con buscadaor
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         inflater.inflate(R.menu.menu_busqueda, menu)
 
@@ -53,6 +54,7 @@ class SeriesFragment : Fragment() {
 
         searchView.queryHint = "Buscar película..."
 
+        // Buscar cuando se pulsa
         searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {
                 // Realizar la búsqueda
@@ -60,6 +62,7 @@ class SeriesFragment : Fragment() {
                 return true
             }
 
+            // Buscar mientras se escribe
             override fun onQueryTextChange(query: String?): Boolean {
                 query?.let {
                     if (it.isNotBlank()) {
@@ -82,6 +85,7 @@ class SeriesFragment : Fragment() {
 
     }
 
+    // Buscar películas populares
     private fun popularSeries() {
         val apiKey = "cef2d5efc3c68480cb48f48b33b29de4"
         val language = "es-ES"
@@ -112,6 +116,7 @@ class SeriesFragment : Fragment() {
         }
     }
 
+    // Buscar por nombre
     private fun searchByName(query: String) {
         val apiKey = "cef2d5efc3c68480cb48f48b33b29de4"
         val language = "es-ES"
@@ -165,6 +170,7 @@ class SeriesFragment : Fragment() {
 
     }
 
+    // Navegar a DetailPeliculaActivity
     private fun navigateToDetail(id: Int) {
         val intent = Intent(requireContext(), DetailSerieActivity::class.java)
         intent.putExtra(EXTRA_ID, id)

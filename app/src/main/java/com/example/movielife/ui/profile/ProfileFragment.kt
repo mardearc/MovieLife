@@ -58,7 +58,7 @@ class ProfileFragment : Fragment() {
         setHasOptionsMenu(true)
     }
 
-
+    // Cargar info usuarios
     private fun loadUserInfo() {
         val userRef = FirebaseDatabase.getInstance().getReference("usuarios").child(viewedUserId)
 
@@ -79,11 +79,13 @@ class ProfileFragment : Fragment() {
         })
     }
 
+    // Contar número de películas y series vistas
     private fun countMedia() {
         val db = FirebaseDatabase.getInstance()
 
         val userRef = db.getReference("usuarios").child(viewedUserId)
 
+        // Número de pelícualas
         userRef.child("peliculasVistas").addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 val peliculasCount = snapshot.childrenCount
@@ -93,6 +95,7 @@ class ProfileFragment : Fragment() {
             override fun onCancelled(error: DatabaseError) {}
         })
 
+        // Número de series
         userRef.child("seriesVistas").addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 val seriesCount = snapshot.childrenCount
@@ -118,6 +121,7 @@ class ProfileFragment : Fragment() {
         }
     }
 
+    // Cerrar sesión
     private fun mostrarDialogoCerrarSesion() {
         val dialog = AlertDialog.Builder(requireContext()).create()
         dialog.setTitle("Cerrar sesión")
@@ -127,20 +131,13 @@ class ProfileFragment : Fragment() {
             dialog.dismiss()
         }
 
+        // Si es que si se cierra la sesión de ese usuario, eliminando datos residuales
         dialog.setButton(AlertDialog.BUTTON_POSITIVE, "Sí") { _, _ ->
             FirebaseAuth.getInstance().signOut()
             val intent = Intent(requireContext(), LoginActivity::class.java)
             intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
             startActivity(intent)
         }
-
-
-
         dialog.show()
-
     }
-
-
-
-
 }

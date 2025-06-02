@@ -40,6 +40,7 @@ class OtherUserProfileActivity : AppCompatActivity() {
         }
     }
 
+    // Preparar ViewPager
     private fun setupViewPagerAndTabs() {
         val adapter = ProfilePagerAdapterActivity(this, viewedUserId)
         binding.viewPager.adapter = adapter
@@ -53,6 +54,7 @@ class OtherUserProfileActivity : AppCompatActivity() {
         }.attach()
     }
 
+    // Cargar info usuarios
     private fun loadUserInfo() {
         val userRef = FirebaseDatabase.getInstance().getReference("usuarios").child(viewedUserId)
 
@@ -72,11 +74,13 @@ class OtherUserProfileActivity : AppCompatActivity() {
         })
     }
 
+    // Contar número de películas y series vistas
     private fun countMedia() {
         val db = FirebaseDatabase.getInstance()
 
         val userRef = db.getReference("usuarios").child(viewedUserId)
 
+        // Número de pelícualas
         userRef.child("peliculasVistas").addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 val peliculasCount = snapshot.childrenCount
@@ -86,6 +90,7 @@ class OtherUserProfileActivity : AppCompatActivity() {
             override fun onCancelled(error: DatabaseError) {}
         })
 
+        // Número de series
         userRef.child("seriesVistas").addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 val seriesCount = snapshot.childrenCount
@@ -96,6 +101,7 @@ class OtherUserProfileActivity : AppCompatActivity() {
         })
     }
 
+    // Preparar botón de seguir
     private fun setupFollowButton() {
         // Si es el mismo usuario, no se muestra el botón de seguir
         if (viewedUserId == currentUserId) {
@@ -107,6 +113,7 @@ class OtherUserProfileActivity : AppCompatActivity() {
 
         val followRef = FirebaseDatabase.getInstance().getReference("seguidores").child(currentUserId)
 
+        // Actualizar información de si sigue o no sigue
         followRef.child(viewedUserId).addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 val sigue = snapshot.exists()
@@ -116,9 +123,11 @@ class OtherUserProfileActivity : AppCompatActivity() {
             override fun onCancelled(error: DatabaseError) {}
         })
 
+        // Acciones al pulsaar en el bton
         binding.btnSeguir.setOnClickListener {
             val ref = FirebaseDatabase.getInstance().getReference("seguidores").child(currentUserId)
 
+            // Actualizar la información
             ref.child(viewedUserId).addListenerForSingleValueEvent(object : ValueEventListener {
                 override fun onDataChange(snapshot: DataSnapshot) {
                     if (snapshot.exists()) {
@@ -135,6 +144,7 @@ class OtherUserProfileActivity : AppCompatActivity() {
         }
     }
 
+    // Cambiar diseño si sigue o no sigue
     private fun updateFollowButton(sigue: Boolean) {
         binding.btnSeguir.text = if (sigue) "Siguiendo" else "Seguir"
 

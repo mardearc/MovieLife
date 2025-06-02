@@ -55,6 +55,7 @@ class ProfilePostFragment : Fragment() {
     }
 
 
+    // Cargar post del usuario que se visualiza
     private fun cargarPostsDeUsuario(uid: String) {
         val database = FirebaseDatabase.getInstance()
         val userPostsRef = database.getReference("usuarios").child(uid).child("postspeliculas")
@@ -63,6 +64,7 @@ class ProfilePostFragment : Fragment() {
         userPostsRef.addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 val postIds = mutableListOf<String>()
+                // Buscar todos los posts
                 for (child in snapshot.children) {
                     postIds.add(child.key!!)
                 }
@@ -77,6 +79,7 @@ class ProfilePostFragment : Fragment() {
                 val userMap = mutableMapOf<String, User>()
                 var fetchedPosts = 0
 
+                // Recuperar información de cada post
                 for (postId in postIds) {
                     postsRef.child(postId).addListenerForSingleValueEvent(object : ValueEventListener {
                         override fun onDataChange(postSnapshot: DataSnapshot) {
@@ -87,9 +90,8 @@ class ProfilePostFragment : Fragment() {
 
                             fetchedPosts++
                             if (fetchedPosts == postIds.size) {
-                                // Una vez que se hayan recuperado todos los posts
                                 val postListOrdenado = postList.sortedByDescending { it.timestamp }
-                                // Recuperamos los datos del usuario (ya que solo es uno)
+                                // Recuperamos los datos del usuario
                                 FirebaseDatabase.getInstance().getReference("usuarios").child(uid)
                                     .addListenerForSingleValueEvent(object : ValueEventListener {
                                         override fun onDataChange(userSnapshot: DataSnapshot) {

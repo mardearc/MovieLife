@@ -38,6 +38,7 @@ class ElegirUsernameActivity : AppCompatActivity() {
         })
 
 
+        // Asignar la imagen que el usuario pulse
         binding.cardview1.setOnClickListener {
             fotoSeleccionada = "imgperfil1"
             val resId = resources.getIdentifier(fotoSeleccionada, "drawable", packageName)
@@ -75,6 +76,7 @@ class ElegirUsernameActivity : AppCompatActivity() {
         }
 
 
+        // Comprobaciones al pulsar en continuar
         binding.btnContinuar.setOnClickListener {
             val nombreUsuario = binding.editTextUsername.text.toString().trim()
 
@@ -109,6 +111,7 @@ class ElegirUsernameActivity : AppCompatActivity() {
                     fotoPerfil = fotoSeleccionada
                 )
 
+                // Registrar usuario en Firebase
                 database.child("usuarios")
                     .child(uid)
                     .setValue(usuario)

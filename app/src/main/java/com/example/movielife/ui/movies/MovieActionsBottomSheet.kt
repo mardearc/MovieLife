@@ -129,6 +129,7 @@ class MovieActionsBottomSheet(
         return view
     }
 
+    // Guardar post
     private fun savePost(peliculaId: Int, comentario: String, valoracion: Double) {
         val database = FirebaseDatabase.getInstance()
         val postsRef = database.getReference("postspeliculas")
@@ -168,6 +169,7 @@ class MovieActionsBottomSheet(
 
     }
 
+    // Actualizar logo de watchlist
     private fun updateWatchlistUI() {
         val color = if (isInWatchlist)
             ContextCompat.getColor(requireContext(), R.color.green_principal)
@@ -177,6 +179,7 @@ class MovieActionsBottomSheet(
         ivWatchlist.setColorFilter(color)
     }
 
+    // Actualizar logo peliculasVistas
     private fun updateWatchedUI() {
         val color = if (isWatched)
             ContextCompat.getColor(requireContext(), R.color.green_principal)

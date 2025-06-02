@@ -22,6 +22,7 @@ class RegisterActivity : AppCompatActivity() {
 
         auth = FirebaseAuth.getInstance()
 
+        // Al pulsar en registrar comporbar los campos
         findViewById<Button>(R.id.btnRegist).setOnClickListener {
             val email = findViewById<EditText>(R.id.emailInput)
             val pass1 = findViewById<EditText>(R.id.passwordInput)
@@ -52,6 +53,7 @@ class RegisterActivity : AppCompatActivity() {
                 return@setOnClickListener
             }
 
+            // Si es correcto se crea un usuario
             auth.createUserWithEmailAndPassword(email.text.toString(), pass1.text.toString())
                 .addOnCompleteListener {
                     if (it.isSuccessful) {
@@ -65,6 +67,7 @@ class RegisterActivity : AppCompatActivity() {
 
             }
 
+        // Volver al login
         findViewById<TextView>(R.id.goToLogin).setOnClickListener {
             startActivity(Intent(this, LoginActivity::class.java))
             overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out)

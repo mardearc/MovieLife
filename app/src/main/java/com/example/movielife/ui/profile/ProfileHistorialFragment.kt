@@ -47,11 +47,13 @@ class ProfileHistorialFragment : Fragment(){
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        // Adapter de películas
         peliculaAdapter = PeliculaAdapter { navigateToDetail(it) }
         binding.recyclerViewHistorialPeliculas.setHasFixedSize(true)
         binding.recyclerViewHistorialPeliculas.layoutManager = GridLayoutManager(requireContext(), 4)
         binding.recyclerViewHistorialPeliculas.adapter = peliculaAdapter
 
+        // Adapter de series
         serieAdapter = SerieAdapter { navigateToDetailSerie(it) }
         binding.recyclerViewHistorialSeries.setHasFixedSize(true)
         binding.recyclerViewHistorialSeries.layoutManager = GridLayoutManager(requireContext(), 4)
@@ -73,13 +75,12 @@ class ProfileHistorialFragment : Fragment(){
         }
     }
 
-
-
     private fun initUI() {
         searchPeliculasVistas()
         searchSeriesVistas()
     }
 
+    // Buscar las películas vistas
     private fun searchPeliculasVistas() {
         val database = FirebaseDatabase.getInstance().reference.child("usuarios").child(uid)
 
@@ -97,6 +98,7 @@ class ProfileHistorialFragment : Fragment(){
         }
     }
 
+    // Buscar series vistas
     private fun searchSeriesVistas() {
         val database = FirebaseDatabase.getInstance().reference.child("usuarios").child(uid)
 
@@ -114,6 +116,7 @@ class ProfileHistorialFragment : Fragment(){
         }
     }
 
+    // Buscar y lanzar activity de una serie
     private fun getSerieData(ids: List<String>) {
         val apiService = retrofit.create(ApiService::class.java)
         val apiKey = "cef2d5efc3c68480cb48f48b33b29de4"
@@ -143,6 +146,7 @@ class ProfileHistorialFragment : Fragment(){
     }
 
 
+    // Buscar y lanzar activity de una película
     private fun getPeliculaData(ids: List<String>) {
         val apiService = retrofit.create(ApiService::class.java)
         val apiKey = "cef2d5efc3c68480cb48f48b33b29de4"
@@ -182,12 +186,13 @@ class ProfileHistorialFragment : Fragment(){
 
     }
 
+    // Navegar a DetailPeliculaActivity
     private fun navigateToDetail(id: Int) {
         val intent = Intent(requireContext(), DetailPeliculaActivity::class.java)
         intent.putExtra(EXTRA_ID, id)
         startActivity(intent)
     }
-
+    // Navegar a DetailSerieActivity
     private fun navigateToDetailSerie(id: Int) {
         val intent = Intent(requireContext(), DetailSerieActivity::class.java)
         intent.putExtra(EXTRA_ID, id)

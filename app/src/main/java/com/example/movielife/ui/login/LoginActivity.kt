@@ -26,16 +26,19 @@ class LoginActivity : AppCompatActivity() {
     private lateinit var auth: FirebaseAuth
     private lateinit var googleSignInClient: GoogleSignInClient
 
+    // Inicio de sesion con Google
     private val signInLauncher =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
             if (result.resultCode == Activity.RESULT_OK) {
                 val data = result.data
                 val task = GoogleSignIn.getSignedInAccountFromIntent(data)
                 try {
+                    // Obtener cuenta de Google
                     val account = task.getResult(ApiException::class.java)
                     Log.d("GoogleSignIn", "Cuenta de Google obtenida: ${account?.email}")
                     val credential = GoogleAuthProvider.getCredential(account.idToken, null)
 
+                    // Iniciar sesión en Firebase
                     auth.signInWithCredential(credential)
                         .addOnCompleteListener { task ->
                             if (task.isSuccessful) {
@@ -45,6 +48,7 @@ class LoginActivity : AppCompatActivity() {
                                     val uid = user.uid
                                     val ref = FirebaseDatabase.getInstance().reference.child("usuarios").child(uid)
 
+                                    // Si el usuario no existe lo crea
                                     ref.get().addOnSuccessListener { snapshot ->
                                         if (!snapshot.exists()) {
                                             // Usuario nuevo
@@ -58,12 +62,13 @@ class LoginActivity : AppCompatActivity() {
                                                 finish()
                                             }
                                         } else {
-                                            // Usuario ya existe en la base de datos
+                                            // Si el usuario ya existe y no tiene datos se lanza ElegirUserName
                                             val nombreUsuario = snapshot.child("nombreUsuario").value
                                             if (nombreUsuario == null || nombreUsuario.toString().isBlank()) {
                                                 startActivity(Intent(this, ElegirUsernameActivity::class.java))
                                                 finish()
                                             } else {
+                                                // Si el usuario ya existe y tiene datos se lanza MainActivity
                                                 goToMain()
                                             }
                                         }
@@ -92,6 +97,7 @@ class LoginActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
 
+        // Si ya hay un usuario autenticado se lanza el main
         if (FirebaseAuth.getInstance().currentUser != null) {
             goToMain()
             return
@@ -99,12 +105,14 @@ class LoginActivity : AppCompatActivity() {
 
         auth = FirebaseAuth.getInstance()
 
+        // Configurar inicio de sesión con Google
         val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
             .requestIdToken(getString(R.string.default_web_client_id))
             .requestEmail()
             .build()
         googleSignInClient = GoogleSignIn.getClient(this, gso)
 
+        // Inicio de sesión con correo y contraseña
         findViewById<Button>(R.id.btnLogin).setOnClickListener {
             val emailBox = findViewById<EditText>(R.id.emailInput)
             val pass1 = findViewById<EditText>(R.id.passwordInput)
@@ -122,7 +130,7 @@ class LoginActivity : AppCompatActivity() {
                 return@setOnClickListener
             }
 
-
+            // Inicio de sesion, si no es correcto se avisa al usuario
             auth.signInWithEmailAndPassword(email, pass)
                 .addOnCompleteListener {
                     if (it.isSuccessful) goToMain()
@@ -130,11 +138,13 @@ class LoginActivity : AppCompatActivity() {
                 }
         }
 
+        // Iniciar con Google si se pulsa
         findViewById<Button>(R.id.btnGoogleSignIn).setOnClickListener {
             val signInIntent = googleSignInClient.signInIntent
             signInLauncher.launch(signInIntent)
         }
 
+        // Ir a RegisterActivity si se pulsa
         findViewById<TextView>(R.id.goToRegister).setOnClickListener {
             startActivity(Intent(this, RegisterActivity::class.java))
             overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out)
@@ -142,6 +152,7 @@ class LoginActivity : AppCompatActivity() {
 
     }
 
+    // Ir a MainActivity
     private fun goToMain() {
         Log.d("LoginActivity", "Redirigiendo a MainActivity.")
         startActivity(Intent(this, MainActivity::class.java))

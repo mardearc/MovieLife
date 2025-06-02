@@ -32,6 +32,7 @@ class SearchUserAdapter(
     override fun onBindViewHolder(holder: UserViewHolder, position: Int) {
         val usuario = listaUsuarios[position]
 
+        // Nombre, peliculas y series vistas por el usuario
         holder.textNombre.text = usuario.nombreUsuario
         holder.textPeliculas.text = "Películas: ${usuario.peliculasVistas.size}"
         holder.textSeries.text = "Series: ${usuario.seriesVistas.size}"
@@ -41,6 +42,7 @@ class SearchUserAdapter(
         val imgPerfilId = contexto.resources.getIdentifier(usuario.fotoPerfil, "drawable", contexto.packageName)
         holder.imgPerfil.setImageResource(if (imgPerfilId != 0) imgPerfilId else R.drawable.ic_launcher_foreground)
 
+        // Ir a la activity al pulsar en el item
         holder.itemView.setOnClickListener{
             val intent = Intent(contexto, OtherUserProfileActivity::class.java)
             intent.putExtra("uid", usuario.uid)

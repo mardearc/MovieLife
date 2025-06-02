@@ -35,8 +35,6 @@ class DetailActorActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityDetailActorBinding
 
-    private lateinit var adapter: PeliculaAdapter
-
     private var isExpanded = false
 
     override fun onCreate(savedInstanceState: Bundle?) {

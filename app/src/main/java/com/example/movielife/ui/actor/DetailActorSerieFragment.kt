@@ -25,12 +25,14 @@ import retrofit2.converter.gson.GsonConverterFactory
 class DetailActorSerieFragment : Fragment() {
 
     private var actorId: Int = 0
+    private var role: String ="actor"
     private lateinit var adapter: SerieAdapter
     private lateinit var binding: FragmentDetailActorSerieBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         actorId = arguments?.getInt("actor_id") ?: 0
+        role = arguments?.getString("role").toString()
     }
 
     override fun onCreateView(
@@ -40,6 +42,7 @@ class DetailActorSerieFragment : Fragment() {
         return binding.root
     }
 
+    // Recuperar actorId y role
     companion object {
         fun newInstance(actorId: Int, role: String): DetailActorSerieFragment {
             val fragment = DetailActorSerieFragment()
@@ -60,9 +63,14 @@ class DetailActorSerieFragment : Fragment() {
         binding.recyclerView.layoutManager = GridLayoutManager(context, 2)
         binding.recyclerView.adapter = adapter
 
-        getSeries(actorId)
+        if (role == "actor") {
+            getSeries(actorId)
+        } else if (role == "crew") {
+            getSeriesCrew(actorId)
+        }
     }
 
+    // Obtener series de actores
     private fun getSeries(id: Int) {
         val apiKey = "cef2d5efc3c68480cb48f48b33b29de4"
         binding.pbBuscador.isVisible = true
@@ -95,6 +103,7 @@ class DetailActorSerieFragment : Fragment() {
         }
     }
 
+    // Obtener series de crew
     private fun getSeriesCrew(id: Int) {
         val apiKey = "cef2d5efc3c68480cb48f48b33b29de4"
         binding.pbBuscador.isVisible = true

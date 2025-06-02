@@ -42,6 +42,7 @@ class DetailActorPeliculaFragment : Fragment() {
         return binding.root
     }
 
+    // Recuperar actorId y role
     companion object {
         fun newInstance(actorId: Int, role: String): DetailActorPeliculaFragment {
             val fragment = DetailActorPeliculaFragment()
@@ -70,6 +71,7 @@ class DetailActorPeliculaFragment : Fragment() {
         }
     }
 
+    // Obtener peliculas de actores
     private fun getPeliculas(id: Int) {
         val apiKey = "cef2d5efc3c68480cb48f48b33b29de4"
         binding.pbBuscador.isVisible = true
@@ -99,6 +101,7 @@ class DetailActorPeliculaFragment : Fragment() {
         }
     }
 
+    // Obtener peliculas de crew
     private fun getPeliculasCrew(id: Int) {
         val apiKey = "cef2d5efc3c68480cb48f48b33b29de4"
 

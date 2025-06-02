@@ -45,6 +45,7 @@ class ParatiHomeFragment : Fragment() {
         cargarPostsGlobales()
     }
 
+    // Cargar todos los posts(series y películas)
     private fun cargarPostsGlobales() {
         val database = FirebaseDatabase.getInstance()
         val postsPeliculasRef = database.getReference("postspeliculas")
@@ -55,14 +56,17 @@ class ParatiHomeFragment : Fragment() {
 
         val postsCargados = mutableListOf<Boolean>()
 
+        // Verficar si se han cargado todos los posts
         fun verificarCargaCompleta() {
             if (postsCargados.size >= 1) {
+                // Si no hay post se inicia adapter vacío
                 if (todosLosPosts.isEmpty()) {
                     Log.d("ParatiPostLog", "No se encontraron posts")
                     binding.recyclerViewPosts.adapter = PostAdapter(emptyList(), emptyMap())
                     return
                 }
 
+                // Ordenar post por fecha
                 val postListOrdenado = todosLosPosts.sortedByDescending { it.timestamp }
                 fetchUsersAndSetAdapter(postListOrdenado, uidSet)
             }
@@ -112,16 +116,19 @@ class ParatiHomeFragment : Fragment() {
     }
 
 
+    // Obtener datos de los usuarios
     private fun fetchUsersAndSetAdapter(postList: List<Post>, uidSet: Set<String>) {
         val usuariosRef = FirebaseDatabase.getInstance().getReference("usuarios")
         val userMap = mutableMapOf<String, User>()
         var fetchedUsers = 0
 
+        // Si no hay usuarios se asigna el adapter sin usuarios
         if (uidSet.isEmpty()) {
             binding.recyclerViewPosts.adapter = PostAdapter(postList, userMap)
             return
         }
 
+        // Buscar informacion de cada usuario
         for (uid in uidSet) {
             usuariosRef.child(uid).addListenerForSingleValueEvent(object : ValueEventListener {
                 override fun onDataChange(snapshot: DataSnapshot) {
@@ -131,6 +138,7 @@ class ParatiHomeFragment : Fragment() {
                     }
 
                     fetchedUsers++
+                    // Cargar adapter con todos los usuarios
                     if (fetchedUsers == uidSet.size) {
                         binding.recyclerViewPosts.adapter = PostAdapter(postList, userMap)
                     }

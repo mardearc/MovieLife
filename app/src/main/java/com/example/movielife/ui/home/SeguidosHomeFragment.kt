@@ -54,6 +54,7 @@ class SeguidosHomeFragment : Fragment() {
         cargarPostsSeguidos()
     }
 
+    // Cargar todos los posts de usuarios seguidos(series y películas)
     private fun cargarPostsSeguidos() {
         val database = FirebaseDatabase.getInstance()
         val seguidoresRef = database.getReference("seguidores").child(uid)
@@ -61,6 +62,7 @@ class SeguidosHomeFragment : Fragment() {
         seguidoresRef.addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 val followedUids = mutableSetOf<String>()
+                // Recorrer todos los usuarios y añadir la a la lista los seguidos
                 for (child in snapshot.children) {
                     if (child.getValue(Boolean::class.java) == true) {
                         followedUids.add(child.key ?: "")
@@ -82,6 +84,7 @@ class SeguidosHomeFragment : Fragment() {
         })
     }
 
+    // Cargar posts de seguidos
     private fun cargarPostsGlobales(followedUids: Set<String>) {
         val database = FirebaseDatabase.getInstance()
         val postsPeliculasRef = database.getReference("postspeliculas")
@@ -92,14 +95,17 @@ class SeguidosHomeFragment : Fragment() {
 
         val postsCargados = mutableListOf<Boolean>()
 
+        // Verficar si se han cargado todos los posts
         fun verificarCargaCompleta() {
             if (postsCargados.size >= 1) {
+                // Si no hay post se inicia adapter vacío
                 if (posts.isEmpty()) {
                     Log.d("ParatiPostLog", "No se encontraron posts")
                     binding.recyclerViewPosts.adapter = PostAdapter(emptyList(), emptyMap())
                     return
                 }
 
+                // Ordenar post por fecha
                 val postListOrdenado = posts.sortedByDescending { it.timestamp }
                 fetchUsersAndSetAdapter(postListOrdenado, uidSet)
             }
@@ -148,16 +154,19 @@ class SeguidosHomeFragment : Fragment() {
         })
     }
 
+    // Obtener datos de los usuarios
     private fun fetchUsersAndSetAdapter(postList: List<Post>, uidSet: Set<String>) {
         val usuariosRef = FirebaseDatabase.getInstance().getReference("usuarios")
         val userMap = mutableMapOf<String, User>()
         var fetchedUsers = 0
 
+        // Si no hay usuarios se asigna el adapter sin usuarios
         if (uidSet.isEmpty()) {
             binding.recyclerViewPosts.adapter = PostAdapter(postList, userMap)
             return
         }
 
+        // Buscar informacion de cada usuario
         for (uid in uidSet) {
             usuariosRef.child(uid).addListenerForSingleValueEvent(object : ValueEventListener {
                 override fun onDataChange(snapshot: DataSnapshot) {
@@ -167,6 +176,7 @@ class SeguidosHomeFragment : Fragment() {
                     }
 
                     fetchedUsers++
+                    // Cargar adapter con todos los usuarios
                     if (fetchedUsers == uidSet.size) {
                         binding.recyclerViewPosts.adapter = PostAdapter(postList, userMap)
                     }

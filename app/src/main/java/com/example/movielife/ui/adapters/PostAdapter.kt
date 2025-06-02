@@ -37,8 +37,10 @@ class PostAdapter(
         val imgPerfilId = contexto.resources.getIdentifier(user?.fotoPerfil, "drawable", contexto.packageName)
         holder.imagePerfil.setImageResource(if (imgPerfilId != 0) imgPerfilId else R.drawable.ic_launcher_foreground)
 
+        // Poster
         Picasso.get().load("https://image.tmdb.org/t/p/w500${post.posterPath}").into(holder.imgMoviePoster)
 
+        // Lanzar activity al tocar en el poster
         holder.imgMoviePoster.setOnClickListener{
             var intent: Intent?
             if(post.tipo=="pelicula"){
@@ -51,6 +53,7 @@ class PostAdapter(
             contexto.startActivity(intent)
         }
 
+        // Ir al perfil de un usuarios al tocar en la imagen de perfil
         holder.imagePerfil.setOnClickListener{
             val intent = Intent(contexto, OtherUserProfileActivity::class.java)
             intent.putExtra("uid", post.uid)

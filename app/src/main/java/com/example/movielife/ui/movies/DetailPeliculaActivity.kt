@@ -54,11 +54,14 @@ class DetailPeliculaActivity : AppCompatActivity() {
 
         getPeliculaData(id)
         getPosts(id)
+
+        // Adapter de actores
         adapterActor = ActorAdapter{navigateToActorDetail(it)}
         binding.recyclerViewActor.setHasFixedSize(true)
         binding.recyclerViewActor.layoutManager = LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
         binding.recyclerViewActor.adapter = adapterActor
 
+        // Adapter de crew
         adapterCrew = CrewAdapter{navigateToCrewDetail(it)}
         binding.recyclerViewCrew.setHasFixedSize(true)
         binding.recyclerViewCrew.layoutManager = LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
@@ -67,6 +70,7 @@ class DetailPeliculaActivity : AppCompatActivity() {
         binding.recyclerViewPost.setHasFixedSize(true)
         binding.recyclerViewPost.layoutManager = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
 
+        // Fab para post
         binding.fab.setOnClickListener {
             val bottomSheet = MovieActionsBottomSheet(movieId = id, posterPath = posterPath) { watchlist, watched, comment, rating, tipo ->
 
@@ -81,6 +85,7 @@ class DetailPeliculaActivity : AppCompatActivity() {
 
     }
 
+    // Obtener post de una pelicula a través de su id
     private fun getPosts(id: Int) {
         val database = FirebaseDatabase.getInstance()
         val peliculaPostRef = database.getReference("peliculas").child(id.toString()).child("postspeliculas")
@@ -96,6 +101,7 @@ class DetailPeliculaActivity : AppCompatActivity() {
                     }
                 }
 
+                // Si no se encuentran post settear el adapter vacío
                 if (postIds.isEmpty()) {
                     Log.d("PostLog", "No se encontraron posts para la película con ID $id")
                     binding.recyclerViewPost.adapter = PostAdapter(emptyList(), emptyMap())
@@ -107,6 +113,7 @@ class DetailPeliculaActivity : AppCompatActivity() {
                 val uidSet = mutableSetOf<String>()
                 var fetchedPosts = 0
 
+                // Recuperar información de cada post
                 for (postId in postIds) {
                     postsRef.child(postId).addListenerForSingleValueEvent(object : ValueEventListener {
                         override fun onDataChange(postSnapshot: DataSnapshot) {
@@ -122,6 +129,7 @@ class DetailPeliculaActivity : AppCompatActivity() {
                             fetchedPosts++
                             if (fetchedPosts == postIds.size) {
                                 Log.d("PostLog", "Total de posts recuperados: ${postList.size}")
+                                // Recuperar la informacion
                                 fetchUsersAndSetAdapter(postList, uidSet)
                             }
                         }
@@ -139,6 +147,7 @@ class DetailPeliculaActivity : AppCompatActivity() {
         })
     }
 
+    // Recuperar informacion
     private fun fetchUsersAndSetAdapter(postList: List<Post>, uidSet: Set<String>) {
         val database = FirebaseDatabase.getInstance()
         val usuariosRef = database.getReference("usuarios")
@@ -177,6 +186,7 @@ class DetailPeliculaActivity : AppCompatActivity() {
         }
     }
 
+    // Obtener informacion de películas por su id
     private fun getPeliculaData(id: Int) {
         val apiKey = "cef2d5efc3c68480cb48f48b33b29de4"
 
@@ -276,8 +286,7 @@ class DetailPeliculaActivity : AppCompatActivity() {
         }
     }
 
-
-
+    // Mensaje por si no hay plataformas
     private fun sinPlataforma() {
         val noPlataformasTextView = TextView(this@DetailPeliculaActivity)
         noPlataformasTextView.text = getString(R.string.no_hay_plataformas)
@@ -322,6 +331,7 @@ class DetailPeliculaActivity : AppCompatActivity() {
 
     }
 
+    // Navegar a DetailActorActivity si es actor
     private fun navigateToActorDetail(id: Int) {
         val intent = Intent(this, DetailActorActivity::class.java)
         intent.putExtra(ACTOR_ID, id)
@@ -329,6 +339,7 @@ class DetailPeliculaActivity : AppCompatActivity() {
         startActivity(intent)
     }
 
+    // Navegar a DetailActorActivity si es crew
     private fun navigateToCrewDetail(id: Int) {
         val intent = Intent(this, DetailActorActivity::class.java)
         intent.putExtra(ACTOR_ID, id)

@@ -45,6 +45,7 @@ class MoviesFragment : Fragment() {
 
     }
 
+    // Crear menu con buscadaor
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         inflater.inflate(R.menu.menu_busqueda, menu)
 
@@ -53,17 +54,19 @@ class MoviesFragment : Fragment() {
 
         searchView.queryHint = "Buscar película..."
 
+        // Buscar mientras se escribe
         searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {
                 query?.let { searchByName(it) }
                 return true
             }
 
+            // Buscar cuando se pulsa
             override fun onQueryTextChange(query: String?): Boolean {
                 query?.let {
                     if (it.isNotBlank()) {
                         searchByName(query)
-                    }else{
+                    }else{ // Si no se ha buscado nada por defecto aparecen películas populares
                         popularPeliculas()
                     }
                 }
@@ -82,6 +85,7 @@ class MoviesFragment : Fragment() {
 
     }
 
+    // Buscar películas populares
     private fun popularPeliculas() {
         val apiKey = "cef2d5efc3c68480cb48f48b33b29de4"
         val language = "es-ES"
@@ -112,6 +116,7 @@ class MoviesFragment : Fragment() {
         }
     }
 
+    // Buscar por nombre
     private fun searchByName(query: String) {
         val apiKey = "cef2d5efc3c68480cb48f48b33b29de4"
         val language = "es-ES"
@@ -129,7 +134,7 @@ class MoviesFragment : Fragment() {
                 val myResponse = apiService.getPeliculas(
                     apiKey = apiKey,
                     language = language,
-                    peliculaName = query,
+                    peliculaName = query, // Coincidencia con el nombre
                     page = page,
                     includeAdult = includeAdult
                 )
@@ -165,6 +170,7 @@ class MoviesFragment : Fragment() {
 
     }
 
+    // Navegar a DetailPeliculaActivity
     private fun navigateToDetail(id: Int) {
         val intent = Intent(requireContext(), DetailPeliculaActivity::class.java)
         intent.putExtra(EXTRA_ID, id)

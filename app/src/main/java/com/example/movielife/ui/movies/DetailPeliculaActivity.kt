@@ -186,7 +186,7 @@ class DetailPeliculaActivity : AppCompatActivity() {
         }
     }
 
-    // Obtener informacion de películas por su id
+    // Obtener información de películas por su id
     private fun getPeliculaData(id: Int) {
         val apiKey = "cef2d5efc3c68480cb48f48b33b29de4"
 

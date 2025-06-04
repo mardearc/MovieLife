@@ -76,7 +76,7 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
-        // Cargara imagen y nombre de ese usuario
+        // Cargar imagen y nombre de ese usuario
         userRef.get().addOnCompleteListener { task ->
             if (task.isSuccessful) {
                 val dataSnapshot = task.result
